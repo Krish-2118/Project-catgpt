@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
+import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft, Sprout, Wind, Droplet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -15,18 +15,13 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { crops, indianStates } from "@/lib/data";
 import { DateRange } from "react-day-picker";
 import { Progress } from "@/components/ui/progress";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const formSchema = z.object({
   crop: z.string().min(1, "Please select a crop."),
@@ -50,6 +45,16 @@ const steps = [
     { id: 'season', name: 'Growing Season' },
     { id: 'confirm', name: 'Get Prediction' },
 ]
+
+const cropIcons: { [key: string]: React.ReactNode } = {
+    rice: <Droplet className="h-8 w-8 text-primary/80"/>,
+    wheat: <Wheat className="h-8 w-8 text-primary/80"/>,
+    maize: <Sprout className="h-8 w-8 text-primary/80"/>,
+    sugarcane: <Sprout className="h-8 w-8 text-primary/80"/>,
+    cotton: <Wind className="h-8 w-8 text-primary/80"/>,
+    default: <Wheat className="h-8 w-8 text-primary/80"/>
+}
+
 
 export default function PredictionForm({
   onSubmit,
@@ -104,7 +109,7 @@ export default function PredictionForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
-            
+            <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <motion.div
                 key="crop"
@@ -131,8 +136,8 @@ export default function PredictionForm({
                                     field.value === crop.value ? "border-primary ring-2 ring-primary" : "border-border"
                                 )}
                             >
-                                <CardContent className="p-4 flex flex-col items-center justify-center gap-2">
-                                   <Wheat className="h-8 w-8 text-primary/80"/>
+                                <CardContent className="p-4 flex flex-col items-center justify-center gap-2 aspect-square">
+                                   {cropIcons[crop.value] || cropIcons.default}
                                    <span className="font-semibold text-center">{crop.label}</span>
                                 </CardContent>
                             </Card>
@@ -211,16 +216,16 @@ export default function PredictionForm({
                     </p>
                 </motion.div>
             )}
+            </AnimatePresence>
 
 
             <div className="flex justify-between pt-4">
-              {currentStep > 0 && (
+              {currentStep > 0 ? (
                 <Button type="button" variant="outline" onClick={prevStep} disabled={isLoading}>
                   <ArrowLeft className="mr-2" />
                   Back
                 </Button>
-              )}
-              <div/>
+              ) : <div />}
 
               {currentStep < steps.length - 1 && (
                 <Button type="button" onClick={nextStep}>
@@ -248,8 +253,3 @@ export default function PredictionForm({
     </Card>
   );
 }
-
-// Dummy motion component for syntax, since framer-motion is not installed
-const motion = {
-    div: ({ children, ...props }: { children: React.ReactNode, [key: string]: any }) => <div {...props}>{children}</div>
-};

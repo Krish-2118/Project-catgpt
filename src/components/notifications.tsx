@@ -34,9 +34,9 @@ const notifications = [
 ];
 
 const levelConfig = {
-    high: { icon: AlertCircle, color: "text-red-500", bgColor: "bg-red-50" },
-    medium: { icon: AlertTriangle, color: "text-yellow-500", bgColor: "bg-yellow-50" },
-    low: { icon: Info, color: "text-blue-500", bgColor: "bg-blue-50" },
+    high: { icon: AlertCircle, color: "text-red-600", bgColor: "bg-red-50 border border-red-200" },
+    medium: { icon: AlertTriangle, color: "text-yellow-600", bgColor: "bg-yellow-50 border border-yellow-200" },
+    low: { icon: Info, color: "text-blue-600", bgColor: "bg-blue-50 border border-blue-200" },
 }
 
 export default function Notifications() {
