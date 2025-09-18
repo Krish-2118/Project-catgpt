@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Notifications from "./notifications";
 import PastPredictions from "./past-predictions";
-import CropStatistics from "./crop-statistics";
 import RevenueChart from "./revenue-chart";
+import LandStatus from "./land-status";
 
 export default function FarmerDashboard() {
   return (
@@ -45,12 +45,10 @@ export default function FarmerDashboard() {
 
         {/* Right sidebar */}
         <div className="lg:col-span-1 space-y-8">
+          <LandStatus />
           <Notifications />
           <PastPredictions />
         </div>
-      </div>
-      <div className="pt-8">
-        <CropStatistics crop="all" region="Odisha" />
       </div>
     </div>
   );

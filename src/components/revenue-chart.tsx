@@ -60,8 +60,8 @@ export default function RevenueChart() {
   return (
     <Card className="flex flex-col shadow-lg">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Revenue Overview - Last Year</CardTitle>
-        <CardDescription>Breakdown of revenue by crop</CardDescription>
+        <CardTitle>Annual Revenue Breakdown</CardTitle>
+        <CardDescription>Revenue by Crop - Last 12 Months</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -124,12 +124,12 @@ export default function RevenueChart() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
+      <CardFooter className="flex-col gap-2 text-sm pt-4">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4 text-green-500" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total revenue for the last 12 months
+          Compared to the previous 12-month period.
         </div>
       </CardFooter>
     </Card>
