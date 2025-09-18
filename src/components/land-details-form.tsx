@@ -77,7 +77,7 @@ export default function LandDetailsForm() {
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Predominant Soil Type</FormLabel>
-                    <Select onValueahange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select soil type" />
