@@ -10,7 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -44,7 +43,7 @@ export default function LandDetailsForm() {
   const { control } = useFormContext();
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 p-4 bg-muted/30 rounded-lg">
+    <div className="max-w-2xl mx-auto space-y-6 p-6 bg-card rounded-lg border">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={control}
@@ -76,7 +75,7 @@ export default function LandDetailsForm() {
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select soil type" />
-                  </SelectTrigger>
+                  </Trigger>
                 </FormControl>
                 <SelectContent>
                    {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
@@ -116,7 +115,7 @@ export default function LandDetailsForm() {
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select topography" />
-                  </SelectTrigger>
+                  </Tselectrigger>
                 </FormControl>
                 <SelectContent>
                   {topographies.map(t => <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>)}
@@ -130,5 +129,3 @@ export default function LandDetailsForm() {
     </div>
   );
 }
-
-    

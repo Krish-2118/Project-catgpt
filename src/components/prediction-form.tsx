@@ -5,7 +5,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft, Sprout, Wind, Droplet, Lightbulb, Tractor, Check, Sun, Cloud } from "lucide-react";
+import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,6 @@ import {
   FormField,
   FormItem,
   FormMessage,
-  FormLabel,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { crops, indianStates } from "@/lib/data";
@@ -23,7 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getCropSuggestions, SuggestionResult } from "@/app/actions";
 import { Skeleton } from "./ui/skeleton";
 import { SuggestedCrop } from "@/ai/flows/suggest-crop";
-import LandDetailsForm, { landDetailsSchema, LandDetailsValues } from "./land-details-form";
+import LandDetailsForm, { landDetailsSchema } from "./land-details-form";
 
 
 export const formSchema = z.object({
@@ -34,7 +33,7 @@ export const formSchema = z.object({
 });
 
 type PredictionFormProps = {
-  onSubmit: (data: z.infer<typeof formSchema> & { landDescription: string }) => void;
+  onSubmit: (data: z.infer<typeof formSchema>) => void;
   isLoadingExternally: boolean;
 };
 
@@ -46,12 +45,12 @@ const steps = [
 ]
 
 const cropIcons: { [key: string]: React.ReactNode } = {
-    rice: <Droplet className="h-8 w-8 text-primary/80"/>,
-    wheat: <Wheat className="h-8 w-8 text-primary/80"/>,
-    maize: <Sprout className="h-8 w-8 text-primary/80"/>,
-    sugarcane: <Sprout className="h-8 w-8 text-primary/80"/>,
-    cotton: <Wind className="h-8 w-8 text-primary/80"/>,
-    default: <Wheat className="h-8 w-8 text-primary/80"/>
+    rice: <Droplets className="h-8 w-8 text-blue-400"/>,
+    wheat: <Wheat className="h-8 w-8 text-yellow-600"/>,
+    maize: <Sprout className="h-8 w-8 text-green-500"/>,
+    sugarcane: <Sprout className="h-8 w-8 text-green-600"/>,
+    cotton: <div className="h-8 w-8 text-gray-400 font-bold text-3xl">C</div>, // Custom for cotton
+    default: <Wheat className="h-8 w-8 text-yellow-600"/>
 }
 
 const seasons = [
@@ -86,8 +85,8 @@ export default function PredictionForm({
 
   const { trigger, getValues, setValue } = form;
   
-  const landDetailsToString = (details: LandDetailsValues): string => {
-    return `The farm is located in ${details.district} district. The soil is primarily ${details.soilType}, with irrigation from ${details.irrigationSource}. The land topography is ${details.topography}.`;
+  const landDetailsToString = (details: z.infer<typeof landDetailsSchema>): string => {
+    return `The farm is located in ${details.district} district, Odisha. The soil is primarily ${details.soilType}, with irrigation from ${details.irrigationSource}. The land topography is ${details.topography}.`;
   }
 
   const nextStep = async () => {
@@ -126,28 +125,21 @@ export default function PredictionForm({
   const isFormLoading = isLoading || isLoadingExternally;
 
   return (
-    <Card className="shadow-lg border-2 border-primary/10 overflow-hidden">
-        <CardHeader>
+    <Card className="shadow-lg border-2 border-primary/10 overflow-hidden bg-card/50">
+        <CardHeader className="bg-card">
             <div className="flex justify-between items-start">
                 <div>
                     <CardTitle className="font-headline text-2xl">Get Your Yield Prediction</CardTitle>
-                    <CardDescription>A guided experience to get your forecast for Odisha.</CardDescription>
+                    <CardDescription>A guided AI experience for farmers in Odisha.</CardDescription>
                 </div>
-                <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-muted-foreground"/>
-                    <span className="font-semibold">{indianStates.find(s => s.value === 'odisha')?.label}</span>
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                    <span>{indianStates.find(s => s.value === 'odisha')?.label}</span>
                 </div>
             </div>
         </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 md:p-8">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((data) => {
-            const formData = {
-                ...data,
-                landDescription: landDetailsToString(data.landDetails),
-            };
-            onSubmit(formData);
-          })} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
@@ -197,7 +189,7 @@ export default function PredictionForm({
                                 key={suggestion.cropKey} 
                                 onClick={() => setValue("crop", suggestion.cropKey, { shouldValidate: true })}
                                 className={cn(
-                                    "cursor-pointer transition-all hover:shadow-md flex flex-col",
+                                    "cursor-pointer transition-all hover:shadow-md flex flex-col bg-card",
                                     getValues('crop') === suggestion.cropKey ? "border-primary ring-2 ring-primary" : "border-border"
                                 )}
                             >
@@ -228,7 +220,7 @@ export default function PredictionForm({
                                 key={crop.value} 
                                 onClick={() => field.onChange(crop.value)}
                                 className={cn(
-                                    "cursor-pointer transition-all hover:shadow-md",
+                                    "cursor-pointer transition-all hover:shadow-md bg-card",
                                     field.value === crop.value ? "border-primary ring-2 ring-primary" : "border-border"
                                 )}
                             >
@@ -272,7 +264,7 @@ export default function PredictionForm({
                                                 key={season.id}
                                                 onClick={() => field.onChange(season.id)}
                                                 className={cn(
-                                                    "cursor-pointer transition-all hover:shadow-md text-center",
+                                                    "cursor-pointer transition-all hover:shadow-md text-center bg-card",
                                                     field.value === season.id ? "border-primary ring-2 ring-primary" : "border-border"
                                                 )}
                                             >
@@ -302,7 +294,7 @@ export default function PredictionForm({
                     className="text-center space-y-6"
                  >
                     <h3 className="text-xl font-semibold">Confirm Your Selection</h3>
-                     <div className="bg-muted/50 p-6 rounded-lg max-w-2xl mx-auto text-left space-y-4">
+                     <div className="bg-card p-6 rounded-lg max-w-2xl mx-auto text-left space-y-4 border">
                         <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
                         <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                             <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
