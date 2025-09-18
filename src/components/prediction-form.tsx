@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,11 +14,11 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { crops } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCropSuggestions, SuggestionResult, getIndiYieldPrediction, PredictionResult } from "@/app/actions";
+import { getCropSuggestions, SuggestionResult, getIndiYieldPrediction, PredictionResult, getMarketData, MarketDataResult } from "@/app/actions";
 import { Skeleton } from "./ui/skeleton";
 import { SuggestedCrop } from "@/ai/flows/suggest-crop";
 import LandDetailsForm, { landDetailsSchema } from "./land-details-form";
@@ -34,7 +33,8 @@ export const formSchema = z.object({
 });
 
 type PredictionFormProps = {
-  onSubmit: (data: z.infer<typeof formSchema>) => void;
+  onPredictionComplete: (prediction: PredictionResult, marketData: MarketDataResult, formData: any) => void;
+  onBack: () => void;
 };
 
 const steps = [
@@ -60,11 +60,11 @@ const seasons = [
 ]
 
 
-export default function PredictionForm({ onSubmit }: PredictionFormProps) {
+export default function PredictionForm({ onPredictionComplete, onBack }: PredictionFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestions, setSuggestions] = useState<SuggestionResult | null>(null);
-  const router = useRouter();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -91,13 +91,15 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
   const handleFinalSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-        await getIndiYieldPrediction(data);
+        const [prediction, marketData] = await Promise.all([
+            getIndiYieldPrediction(data),
+            getMarketData(data.crop, data.region)
+        ]);
         toast({
             title: "Prediction Complete!",
-            description: "Redirecting you to the dashboard to see the results.",
+            description: "Your results are ready.",
         });
-        // In a real app, you'd redirect to a results page, e.g., router.push(`/results/${predictionId}`);
-        router.push('/');
+        onPredictionComplete(prediction, marketData, data);
     } catch (error) {
          toast({
             variant: "destructive",
@@ -116,7 +118,7 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
     if (currentStep === 0) {
       isValid = await trigger("landDetails");
       if (isValid) {
-        setIsLoading(true);
+        setIsSuggesting(true);
         try {
           const landDescription = landDetailsToString(getValues('landDetails'));
           const result = await getCropSuggestions(landDescription, getValues('region'));
@@ -129,16 +131,18 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
                 description: "There was an issue with the AI. Please proceed by selecting a crop manually.",
             });
         } finally {
-            setIsLoading(false);
+            setIsSuggesting(false);
         }
       }
     } else if (currentStep === 1) {
       isValid = await trigger("crop");
     } else if (currentStep === 2) {
       isValid = await trigger("sowingSeason");
+    } else if (currentStep === 3) {
+        isValid = true;
     }
     
-    if (isValid && currentStep < steps.length - 1) {
+    if (isValid && currentStep < steps.length) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -153,14 +157,14 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
     <div className="w-full max-w-4xl mx-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFinalSubmit)} className="space-y-8">
-            <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
+            <Progress value={((currentStep) / (steps.length -1)) * 100} className="h-2" />
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <motion.div
                 key="land"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-4"
                 >
@@ -175,9 +179,9 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
             {currentStep === 1 && (
               <motion.div
                 key="crop"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
                 >
@@ -186,7 +190,7 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
                     <p className="text-muted-foreground mt-1">Based on your land, we suggest these crops. Choose one or select another from the list.</p>
                 </div>
                 
-                 {isLoading ? (
+                 {isSuggesting ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Skeleton className="h-48 w-full" />
                         <Skeleton className="h-48 w-full" />
@@ -206,7 +210,7 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
                                     getValues('crop') === suggestion.cropKey ? "border-primary ring-2 ring-primary" : "border-border"
                                 )}
                             >
-                                <CardHeader className="flex-row items-center justify-between">
+                                <CardHeader className="flex-row items-center justify-between pb-2">
                                     <CardTitle className="text-lg">{suggestion.cropName}</CardTitle>
                                     {getValues('crop') === suggestion.cropKey && <Check className="h-5 w-5 text-primary" />}
                                 </CardHeader>
@@ -255,9 +259,9 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
             {currentStep === 2 && (
                 <motion.div
                     key="season"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                 >
@@ -300,9 +304,9 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
             {currentStep === 3 && (
                  <motion.div
                     key="confirm"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
                     transition={{ duration: 0.3 }}
                     className="text-center space-y-6"
                  >
@@ -310,8 +314,9 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
                      <Card className="max-w-2xl mx-auto text-left bg-card/50">
                         <CardHeader>
                             <CardTitle>Prediction Summary</CardTitle>
+                            <CardDescription>Review your selections before generating the AI prediction.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-4 pt-4">
                             <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
                             <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                                 <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
@@ -319,7 +324,7 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
                                 <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource')}</p>
                                 <p><strong className="text-muted-foreground">Topography:</strong> {getValues('landDetails.topography')}</p>
                             </div>
-                             <div className="flex justify-around items-center pt-4">
+                             <div className="flex justify-around items-center pt-4 border-t mt-4">
                                 <div className="text-center">
                                     <p className="text-muted-foreground text-sm">Crop</p>
                                     <p className="font-bold text-lg">{selectedCrop?.label}</p>
@@ -351,11 +356,14 @@ export default function PredictionForm({ onSubmit }: PredictionFormProps) {
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
-              ) : <div />}
+              ) : <Button type="button" variant="ghost" onClick={onBack} disabled={isLoading}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Dashboard
+                </Button>}
 
               {currentStep < steps.length - 1 && (
-                <Button type="button" onClick={nextStep} disabled={isLoading} size="lg">
-                 { isLoading ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2 h-4 w-4" /> </>}
+                <Button type="button" onClick={nextStep} disabled={isSuggesting} size="lg">
+                 { isSuggesting ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2 h-4 w-4" /> </>}
                 </Button>
               )}
 

@@ -4,34 +4,35 @@
 import { History } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 const mockPastPredictions = [
   {
     id: "PRED-001",
     crop: "Rice",
     date: "2024-06-15",
-    predictedYield: "3.5 tons/ha",
+    predictedYield: "3.5 t/ha",
     status: "harvested",
   },
   {
     id: "PRED-002",
     crop: "Cotton",
     date: "2024-05-20",
-    predictedYield: "1.8 tons/ha",
+    predictedYield: "1.8 t/ha",
     status: "harvested",
   },
   {
     id: "PRED-003",
     crop: "Wheat",
     date: "2024-01-10",
-    predictedYield: "2.9 tons/ha",
+    predictedYield: "2.9 t/ha",
     status: "harvested",
   },
    {
     id: "PRED-004",
     crop: "Maize",
     date: "2023-11-25",
-    predictedYield: "4.1 tons/ha",
+    predictedYield: "4.1 t/ha",
     status: "harvested",
   },
 ];
@@ -54,6 +55,7 @@ export default function PastPredictions() {
                         <TableRow>
                             <TableHead>Crop</TableHead>
                             <TableHead>Date</TableHead>
+                            <TableHead>Status</TableHead>
                             <TableHead className="text-right">Predicted Yield</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -62,7 +64,10 @@ export default function PastPredictions() {
                             <TableRow key={pred.id}>
                                 <TableCell className="font-medium">{pred.crop}</TableCell>
                                 <TableCell>{pred.date}</TableCell>
-                                <TableCell className="text-right">{pred.predictedYield}</TableCell>
+                                <TableCell>
+                                    <Badge variant="secondary">{pred.status}</Badge>
+                                </TableCell>
+                                <TableCell className="text-right font-mono">{pred.predictedYield}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

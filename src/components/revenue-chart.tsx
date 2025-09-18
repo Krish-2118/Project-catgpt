@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUp } from "lucide-react"
+import { TrendingUp, PieChart as PieChartIcon } from "lucide-react"
 import { Label, Pie, PieChart, Sector } from "recharts"
 
 import {
@@ -30,7 +30,7 @@ const chartData = [
 
 const chartConfig = {
   revenue: {
-    label: "Revenue",
+    label: "Revenue (INR)",
   },
   ...crops.reduce((acc, crop) => {
     acc[crop.value] = { label: crop.label, color: `hsl(var(--chart-${Object.keys(acc).length + 1}))` };
@@ -44,10 +44,15 @@ export default function RevenueChart() {
   }, [])
 
   return (
-    <Card className="flex flex-col shadow-sm h-full">
+    <Card className="flex flex-col shadow-lg h-full">
       <CardHeader className="items-start pb-0">
-        <CardTitle>Annual Revenue Breakdown</CardTitle>
-        <CardDescription>By Crop - Last 12 Months</CardDescription>
+         <div className="flex items-center gap-3">
+            <PieChartIcon className="h-6 w-6 text-primary" />
+            <div>
+                <CardTitle>Annual Revenue Breakdown</CardTitle>
+                <CardDescription>By Crop - Last 12 Months</CardDescription>
+            </div>
+        </div>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -57,7 +62,7 @@ export default function RevenueChart() {
           <PieChart>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={<ChartTooltipContent hideLabel formatter={(value, name) => `${chartConfig[name as keyof typeof chartConfig]?.label}: ${value.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}`}/>}
             />
             <Pie
               data={chartData}
@@ -65,13 +70,6 @@ export default function RevenueChart() {
               nameKey="crop"
               innerRadius={80}
               strokeWidth={5}
-              activeIndex={0}
-              activeShape={({ outerRadius = 0, ...props }) => (
-                <g>
-                  <Sector {...props} outerRadius={outerRadius + 8} />
-                  <Sector {...props} outerRadius={outerRadius} />
-                </g>
-              )}
             >
               <Label
                 content={({ viewBox }) => {

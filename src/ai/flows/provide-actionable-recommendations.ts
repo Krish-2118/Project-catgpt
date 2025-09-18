@@ -39,7 +39,7 @@ const prompt = ai.definePrompt({
   output: {schema: ProvideActionableRecommendationsOutputSchema},
   prompt: `You are an expert agronomist providing tailored advice to farmers in Odisha, India.
 
-  Your task is to generate specific, actionable recommendations for irrigation, fertilization, and pest control. Your advice MUST be directly influenced by the detailed land and weather information provided. Do not give generic advice.
+  Your task is to generate specific, actionable recommendations for irrigation, fertilization, and pest control. Your advice MUST be directly influenced by the detailed land and weather information provided. Do not give generic advice. Be detailed and provide a step-by-step guide where possible.
 
   IMPORTANT: The generated recommendations must be varied and not a repetition of previous answers.
 
@@ -52,11 +52,11 @@ const prompt = ai.definePrompt({
 
   **Your Recommendations:**
 
-  - **Irrigation:** Based on the crop's water needs, the land's irrigation source, and topography, provide a specific irrigation schedule and method. For example, if the soil is sandy and the weather is dry, recommend drip irrigation every 2 days.
+  - **Irrigation Recommendation:** Based on the crop's water needs, the land's irrigation source, soil type, and topography, provide a specific, phased irrigation schedule and method. For example: "For sandy soil with upcoming dry spells, recommend drip irrigation. Week 1-3 (Germination): Apply 5mm daily. Week 4-8 (Vegetative Growth): Increase to 8mm daily, monitoring for water stress..."
   
-  - **Fertilization:** Based on the soil type and crop, recommend a specific nutrient management plan (N-P-K ratio) and application timeline. Be specific about the type of fertilizer (e.g., urea, DAP) and the application stages (e.g., basal, top dressing).
+  - **Fertilization Recommendation:** Based on the soil type and crop, recommend a specific, multi-stage nutrient management plan (N-P-K ratio) and application timeline. Be specific about the type of fertilizer (e.g., urea, DAP, MOP) and the application stages. For example: "Basal Dose (at sowing): 50kg DAP, 25kg MOP per acre. First Top Dressing (30 days after sowing): 40kg Urea per acre..."
 
-  - **Pest Control:** Based on the crop, region, and common vulnerabilities, suggest integrated pest management (IPM) techniques and specific actions to prevent common pests. Mention specific, locally available organic or chemical solutions if applicable.`,
+  - **Pest Control Recommendation:** Based on the crop, region, and common vulnerabilities, suggest a multi-layered integrated pest management (IPM) plan. Mention specific preventative measures, monitoring techniques, and locally available organic or chemical solutions as corrective actions. For example: "Preventative: Use neem oil spray every 15 days. Monitoring: Set up pheromone traps to monitor for stem borer moths. Corrective: If infestation exceeds 5% of plants, apply Chlorantraniliprole 18.5% SC..."`,
 });
 
 const provideActionableRecommendationsFlow = ai.defineFlow(

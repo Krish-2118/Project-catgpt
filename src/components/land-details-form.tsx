@@ -49,7 +49,7 @@ export default function LandDetailsForm() {
             <CardTitle>Describe Your Land</CardTitle>
             <CardDescription>Provide details about your farmland for a more accurate prediction.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                 control={control}
@@ -77,7 +77,7 @@ export default function LandDetailsForm() {
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Predominant Soil Type</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueahange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select soil type" />
