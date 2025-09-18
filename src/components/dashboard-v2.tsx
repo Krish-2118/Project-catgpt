@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { z } from "zod";
 import { PredictionResult, getIndiYieldPrediction, MarketDataResult, getMarketData } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
@@ -58,7 +58,7 @@ export default function DashboardV2() {
 
   return (
     <div className="space-y-8">
-      <PredictionForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+      <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />
       
       <div className="animate-in fade-in duration-500">
         {isLoading && <ResultsSkeleton />}

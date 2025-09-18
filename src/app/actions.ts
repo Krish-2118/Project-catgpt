@@ -4,14 +4,19 @@ import { z } from "zod";
 import { predictCropYields } from "@/ai/flows/predict-crop-yields";
 import { provideActionableRecommendations } from "@/ai/flows/provide-actionable-recommendations";
 import { getMarketIntelligence, MarketIntelligenceOutput } from "@/ai/flows/get-market-intelligence";
+import { suggestCrop, SuggestCropOutput } from "@/ai/flows/suggest-crop";
 
-const formSchema = z.object({
+export const formSchema = z.object({
+  landDescription: z.string().min(20, "Please provide a more detailed description of your land (at least 20 characters)."),
   crop: z.string().min(1, "Please select a crop."),
   region: z.string().min(1, "Please select a region."),
-  dateRange: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
+  dateRange: z.object(
+    {
+      from: z.date({ required_error: "Start date is required." }),
+      to: z.date({ required_error: "End date is required." }),
+    },
+    { required_error: "Please select a date range." }
+  ),
 });
 
 export type PredictionResult = {
@@ -24,6 +29,8 @@ export type PredictionResult = {
 };
 
 export type MarketDataResult = MarketIntelligenceOutput;
+export type SuggestionResult = SuggestCropOutput;
+
 
 // Helper function to extract a number from a string
 const parseYield = (yieldString: string): number => {
@@ -31,11 +38,22 @@ const parseYield = (yieldString: string): number => {
     return match ? parseFloat(match[0]) : 0;
 };
 
+export async function getCropSuggestions(landDescription: string, region: string): Promise<SuggestionResult> {
+    try {
+        const suggestions = await suggestCrop({ landDescription, region });
+        return suggestions;
+    } catch (error) {
+        console.error("Error in AI crop suggestion flow:", error);
+        throw new Error("Failed to get crop suggestions. Please try again.");
+    }
+}
+
+
 export async function getIndiYieldPrediction(
   data: z.infer<typeof formSchema>
 ): Promise<PredictionResult> {
   try {
-    const { crop, region, dateRange } = data;
+    const { crop, region, dateRange, landDescription } = data;
 
     // In a real application, these would be fetched from various data sources/APIs
     const mockHistoricalData = `Historical data for ${crop} in ${region} shows an average yield of 2.8 tons/hectare.`;
@@ -47,6 +65,7 @@ export async function getIndiYieldPrediction(
     const predictionOutput = await predictCropYields({
       cropType: crop,
       region: region,
+      landDescription: landDescription,
       historicalData: mockHistoricalData,
       weatherPatterns: mockWeatherPatterns,
       soilHealthMetrics: mockSoilHealthMetrics,

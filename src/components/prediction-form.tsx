@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft, Sprout, Wind, Droplet } from "lucide-react";
+import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft, Sprout, Wind, Droplet, Lightbulb, Tractor, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -16,14 +16,20 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { crops, indianStates } from "@/lib/data";
 import { DateRange } from "react-day-picker";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
+import { Textarea } from "./ui/textarea";
+import { getCropSuggestions, SuggestionResult } from "@/app/actions";
+import { Skeleton } from "./ui/skeleton";
+import { SuggestedCrop } from "@/ai/flows/suggest-crop";
 
 export const formSchema = z.object({
+  landDescription: z.string().min(20, "Please provide a more detailed description of your land (at least 20 characters)."),
   crop: z.string().min(1, "Please select a crop."),
   region: z.string().min(1, "Please select a region."),
   dateRange: z.object(
@@ -37,10 +43,11 @@ export const formSchema = z.object({
 
 type PredictionFormProps = {
   onSubmit: (data: z.infer<typeof formSchema>) => void;
-  isLoading: boolean;
+  isLoadingExternally: boolean;
 };
 
 const steps = [
+    { id: 'land', name: 'Describe Land' },
     { id: 'crop', name: 'Select Crop' },
     { id: 'season', name: 'Growing Season' },
     { id: 'confirm', name: 'Get Prediction' },
@@ -58,25 +65,42 @@ const cropIcons: { [key: string]: React.ReactNode } = {
 
 export default function PredictionForm({
   onSubmit,
-  isLoading,
+  isLoadingExternally,
 }: PredictionFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<SuggestionResult | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      landDescription: "",
       crop: "",
       region: "odisha",
     },
   });
 
-  const { trigger, getValues } = form;
+  const { trigger, getValues, setValue } = form;
 
   const nextStep = async () => {
     let isValid = false;
     if (currentStep === 0) {
-      isValid = await trigger("crop");
+      isValid = await trigger("landDescription");
+      if (isValid) {
+        setIsLoading(true);
+        try {
+          const result = await getCropSuggestions(getValues('landDescription'), getValues('region'));
+          setSuggestions(result);
+        } catch (e) {
+            // Handle error appropriately
+            console.error(e);
+        } finally {
+            setIsLoading(false);
+        }
+      }
     } else if (currentStep === 1) {
+      isValid = await trigger("crop");
+    } else if (currentStep === 2) {
       isValid = await trigger("dateRange");
     }
     
@@ -90,6 +114,7 @@ export default function PredictionForm({
   };
   
   const selectedCrop = crops.find(c => c.value === getValues('crop'));
+  const isFormLoading = isLoading || isLoadingExternally;
 
   return (
     <Card className="shadow-lg border-2 border-primary/10 overflow-hidden">
@@ -112,19 +137,86 @@ export default function PredictionForm({
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <motion.div
-                key="crop"
+                key="land"
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-4"
                 >
-                <h3 className="text-lg font-semibold text-center">Step 1: Select Your Crop</h3>
+                <h3 className="text-lg font-semibold text-center">Step 1: Describe Your Land</h3>
+                 <FormField
+                  control={form.control}
+                  name="landDescription"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col items-center">
+                      <FormLabel className="text-center w-full">
+                        Tell us about your farm land. e.g., "My farm is in the coastal area of Puri district. The soil is mostly sandy loam, and I have access to canal irrigation."
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea {...field} className="min-h-[100px] max-w-lg" placeholder="Describe your land here..."/>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+            )}
+
+            {currentStep === 1 && (
+              <motion.div
+                key="crop"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6"
+                >
+                <div className="text-center">
+                    <h3 className="text-lg font-semibold">Step 2: Select Your Crop</h3>
+                    <p className="text-muted-foreground">Based on your land, we suggest these crops. Choose one or select another from the list.</p>
+                </div>
+                
+                 {isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Skeleton className="h-48 w-full" />
+                        <Skeleton className="h-48 w-full" />
+                        <Skeleton className="h-48 w-full" />
+                    </div>
+                ) : (
+                    suggestions && (
+                        <div>
+                        <h4 className="flex items-center gap-2 font-semibold mb-3 text-primary"><Lightbulb className="h-5 w-5"/> AI Suggestions</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                          {suggestions.suggestions.map((suggestion: SuggestedCrop) => (
+                            <Card 
+                                key={suggestion.cropKey} 
+                                onClick={() => setValue("crop", suggestion.cropKey, { shouldValidate: true })}
+                                className={cn(
+                                    "cursor-pointer transition-all hover:shadow-md flex flex-col",
+                                    getValues('crop') === suggestion.cropKey ? "border-primary ring-2 ring-primary" : "border-border"
+                                )}
+                            >
+                                <CardHeader className="flex-row items-center justify-between">
+                                    <CardTitle className="text-lg">{suggestion.cropName}</CardTitle>
+                                    {getValues('crop') === suggestion.cropKey && <Check className="h-5 w-5 text-primary" />}
+                                </CardHeader>
+                                <CardContent className="flex-grow">
+                                   <p className="text-sm text-muted-foreground">{suggestion.reason}</p>
+                                </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                        </div>
+                    )
+                )}
+
                 <FormField
                   control={form.control}
                   name="crop"
                   render={({ field }) => (
                     <FormItem>
+                        <h4 className="flex items-center gap-2 font-semibold mb-3"><Tractor className="h-5 w-5"/> Or Choose Another Crop</h4>
                       <FormControl>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                           {crops.map((crop) => (
@@ -151,7 +243,7 @@ export default function PredictionForm({
               </motion.div>
             )}
 
-            {currentStep === 1 && (
+            {currentStep === 2 && (
                 <motion.div
                 key="season"
                 initial={{ opacity: 0, x: 50 }}
@@ -160,7 +252,7 @@ export default function PredictionForm({
                 transition={{ duration: 0.3 }}
                 className="flex flex-col items-center space-y-4"
               >
-                <h3 className="text-lg font-semibold">Step 2: Select the Growing Season</h3>
+                <h3 className="text-lg font-semibold">Step 3: Select the Growing Season</h3>
                 <FormField
                   control={form.control}
                   name="dateRange"
@@ -184,7 +276,7 @@ export default function PredictionForm({
               </motion.div>
             )}
             
-            {currentStep === 2 && (
+            {currentStep === 3 && (
                  <motion.div
                     key="confirm"
                     initial={{ opacity: 0, x: 50 }}
@@ -194,6 +286,10 @@ export default function PredictionForm({
                     className="text-center space-y-6"
                  >
                     <h3 className="text-xl font-semibold">Confirm Your Selection</h3>
+                     <div className="bg-muted/50 p-4 rounded-lg max-w-2xl mx-auto text-left">
+                        <h4 className="font-semibold mb-2">Land Details:</h4>
+                        <p className="text-sm text-muted-foreground italic">"{getValues('landDescription')}"</p>
+                    </div>
                     <div className="flex justify-center items-center gap-8">
                         <div className="text-center">
                             <p className="text-muted-foreground">Crop</p>
@@ -221,22 +317,21 @@ export default function PredictionForm({
 
             <div className="flex justify-between pt-4">
               {currentStep > 0 ? (
-                <Button type="button" variant="outline" onClick={prevStep} disabled={isLoading}>
+                <Button type="button" variant="outline" onClick={prevStep} disabled={isFormLoading}>
                   <ArrowLeft className="mr-2" />
                   Back
                 </Button>
               ) : <div />}
 
               {currentStep < steps.length - 1 && (
-                <Button type="button" onClick={nextStep}>
-                  Next
-                  <ArrowRight className="ml-2" />
+                <Button type="button" onClick={nextStep} disabled={isFormLoading}>
+                 { isLoading ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2" /> </>}
                 </Button>
               )}
 
               {currentStep === steps.length - 1 && (
-                <Button type="submit" disabled={isLoading} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
-                  {isLoading ? (
+                <Button type="submit" disabled={isFormLoading} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+                  {isLoadingExternally ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating...
