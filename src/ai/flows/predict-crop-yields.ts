@@ -9,6 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getLongRangeWeatherForecast } from '../tools/get-long-range-weather-forecast';
 
 const PredictCropYieldsInputSchema = z.object({
   cropType: z.string().describe('The type of crop to predict the yield for.'),
@@ -18,7 +19,6 @@ const PredictCropYieldsInputSchema = z.object({
   historicalData: z.string().describe('Historical agricultural data for the specified crop and region.'),
   weatherPatterns: z.string().describe('Weather patterns for the specified region.'),
   soilHealthMetrics: z.string().describe('Soil health metrics for the specified region.'),
-  longRangeWeatherForecast: z.string().optional().describe('Long range weather forecast to improve predictions'),
 });
 export type PredictCropYieldsInput = z.infer<typeof PredictCropYieldsInputSchema>;
 
@@ -36,9 +36,12 @@ const prompt = ai.definePrompt({
   name: 'predictCropYieldsPrompt',
   input: {schema: PredictCropYieldsInputSchema},
   output: {schema: PredictCropYieldsOutputSchema},
+  tools: [getLongRangeWeatherForecast],
   prompt: `You are an expert agricultural advisor specializing in predicting crop yields in India.
 
   Based on the following information, predict the crop yield for the specified crop and region, and provide actionable recommendations for farmers to optimize their farming practices. Your prediction should be more specific and nuanced based on the detailed land description and sowing season provided.
+
+  To improve your prediction, you can use the available tool to fetch the long-range weather forecast for the upcoming season.
 
   IMPORTANT: The generated values for yield and recommendations must be varied and not a repetition of previous answers.
 
@@ -49,7 +52,6 @@ const prompt = ai.definePrompt({
   Historical Data: {{{historicalData}}}
   Weather Patterns: {{{weatherPatterns}}}
   Soil Health Metrics: {{{soilHealthMetrics}}}
-  Long Range Weather Forecast: {{{longRangeWeatherForecast}}}
 
   Provide the predicted yield and recommendations in a clear and concise manner.
 `,

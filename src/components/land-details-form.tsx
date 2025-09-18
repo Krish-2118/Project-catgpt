@@ -17,10 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "./ui/button";
-import { MapPin, Loader2 } from "lucide-react";
-import { useState } from "react";
-
 
 export const landDetailsSchema = z.object({
   district: z.string().min(1, "Please select a district."),
@@ -43,32 +39,10 @@ const topographies = ["Plains", "Hilly/Undulating", "Coastal/Deltaic", "Plateau"
 
 
 export default function LandDetailsForm() {
-  const { control, setValue } = useFormContext();
-  const [isLocating, setIsLocating] = useState(false);
-
-  const handleUseLocation = () => {
-    setIsLocating(true);
-    // Simulate getting location and reverse geocoding
-    setTimeout(() => {
-      // In a real app, you'd use navigator.geolocation and a reverse geocoding API
-      const randomDistrict = odishaDistricts[Math.floor(Math.random() * odishaDistricts.length)];
-      setValue("landDetails.district", randomDistrict.toLowerCase(), { shouldValidate: true });
-      setIsLocating(false);
-    }, 1000);
-  };
+  const { control } = useFormContext();
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 p-6 bg-card rounded-lg border">
-       <div className="flex justify-end">
-        <Button type="button" variant="outline" size="sm" onClick={handleUseLocation} disabled={isLocating}>
-          {isLocating ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <MapPin className="mr-2 h-4 w-4" />
-          )}
-          Use My Location
-        </Button>
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={control}

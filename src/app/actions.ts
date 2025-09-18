@@ -47,12 +47,12 @@ export async function getIndiYieldPrediction(
     const landDescription = `The farm is located in ${landDetails.district} district. The soil is primarily ${landDetails.soilType}, with irrigation from ${landDetails.irrigationSource}. The land topography is ${landDetails.topography}.`;
 
     // In a real application, these would be fetched from various data sources/APIs
+    // For this app, we simulate this by having the AI use tools or by providing context.
     const mockHistoricalData = `Historical data for ${crop} in ${region} shows an average yield of 2.8 tons/hectare.`;
-    const mockWeatherPatterns = `The region of ${region} typically experiences a monsoon season from June to September.`;
+    const mockWeatherPatterns = `The region of ${region} typically experiences a monsoon season from June to September, with Rabi and Zaid seasons having distinct weather patterns.`;
     const mockSoilHealthMetrics = `Soil in this part of ${region} is predominantly ${data.landDetails.soilType}.`;
-    const mockLongRangeForecast = `The forecast for the ${sowingSeason} season predicts slightly above-average rainfall.`;
-
-    // 1. Predict Crop Yield
+    
+    // 1. Predict Crop Yield - The AI may use the getLongRangeWeatherForecast tool here.
     const predictionOutput = await predictCropYields({
       cropType: crop,
       region: region,
@@ -61,7 +61,6 @@ export async function getIndiYieldPrediction(
       historicalData: mockHistoricalData,
       weatherPatterns: mockWeatherPatterns,
       soilHealthMetrics: mockSoilHealthMetrics,
-      longRangeWeatherForecast: mockLongRangeForecast,
     });
 
     const predictedYieldValue = parseYield(predictionOutput.predictedYield);
@@ -100,5 +99,5 @@ export async function getMarketData(
     } catch (error) {
         console.error("Error in AI market data flow:", error);
         throw new Error("Failed to get market data. Please try again.");
-    }
+  }
 }
