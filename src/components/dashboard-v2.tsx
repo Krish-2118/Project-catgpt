@@ -11,7 +11,6 @@ import ResultsDisplay from "./results-display";
 import ResultsSkeleton from "./results-skeleton";
 import InitialState from "./initial-state";
 import MarketPrices from "./market-prices";
-import WeatherForecast from "./weather-forecast";
 import CropStatistics from "./crop-statistics";
 import { indianStates } from "@/lib/data";
 
@@ -66,7 +65,7 @@ export default function DashboardV2() {
           <>
             <ResultsDisplay result={result} />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-3">
                 <MarketPrices 
                     crop={selectedCrop} 
                     region={currentRegion?.label || "Odisha"}
@@ -74,7 +73,6 @@ export default function DashboardV2() {
                     isLoading={isMarketLoading}
                 />
               </div>
-              <WeatherForecast region={currentRegion?.label || "Odisha"} />
             </div>
             <div className="mt-8">
                 <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} />

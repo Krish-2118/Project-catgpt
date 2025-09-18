@@ -1,4 +1,4 @@
-// src/ai/flows/provide-actionable-recommendations.ts
+
 'use server';
 /**
  * @fileOverview Provides tailored recommendations for irrigation, fertilization, and pest control based on predicted crop yields and regional conditions.
@@ -40,6 +40,8 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert agronomist providing tailored advice to farmers in Odisha, India.
 
   Your task is to generate specific, actionable recommendations for irrigation, fertilization, and pest control. Your advice MUST be directly influenced by the detailed land and weather information provided. Do not give generic advice.
+
+  IMPORTANT: The generated recommendations must be varied and not a repetition of previous answers.
 
   **Farm Details:**
   - Crop: {{{crop}}}

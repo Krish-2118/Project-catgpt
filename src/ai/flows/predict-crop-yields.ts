@@ -40,6 +40,8 @@ const prompt = ai.definePrompt({
 
   Based on the following information, predict the crop yield for the specified crop and region, and provide actionable recommendations for farmers to optimize their farming practices. Your prediction should be more specific and nuanced based on the detailed land description and sowing season provided.
 
+  IMPORTANT: The generated values for yield and recommendations must be varied and not a repetition of previous answers.
+
   Crop Type: {{{cropType}}}
   Region: {{{region}}}
   Sowing Season: {{{sowingSeason}}}

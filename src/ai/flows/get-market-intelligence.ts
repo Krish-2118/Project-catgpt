@@ -44,6 +44,8 @@ const prompt = ai.definePrompt({
 
   Your task is to provide detailed market intelligence for a specific crop. Generate a list of realistic, current market prices from four major mandis within Odisha. Also provide a brief trend analysis and a concrete recommendation for the farmer.
 
+  IMPORTANT: The generated values for prices and trends must be varied and not a repetition of previous answers.
+
   Crop: {{{crop}}}
   Region: {{{region}}}
 
