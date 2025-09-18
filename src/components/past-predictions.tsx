@@ -4,7 +4,6 @@
 import { History } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 
 const mockPastPredictions = [
   {
@@ -45,7 +44,7 @@ export default function PastPredictions() {
                     <History className="h-6 w-6 text-primary" />
                     <div>
                         <CardTitle className="font-headline text-xl">Prediction History</CardTitle>
-                        <CardDescription>A log of your previous predictions.</CardDescription>
+                        <CardDescription>A log of your previous AI-driven predictions.</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -55,7 +54,7 @@ export default function PastPredictions() {
                         <TableRow>
                             <TableHead>Crop</TableHead>
                             <TableHead>Date</TableHead>
-                            <TableHead className="text-right">Yield</TableHead>
+                            <TableHead className="text-right">Predicted Yield</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

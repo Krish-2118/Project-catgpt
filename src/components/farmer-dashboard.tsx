@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { z } from "zod";
 import { PredictionResult, getIndiYieldPrediction, MarketDataResult, getMarketData } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
-import { PlusCircle, ChevronsDown, ChevronsUp } from "lucide-react";
+import { ChevronsDown, ChevronsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -22,6 +22,7 @@ import CropStatistics from "./crop-statistics";
 import { indianStates } from "@/lib/data";
 import PastPredictions from "./past-predictions";
 import Notifications from "./notifications";
+import InitialState from "./initial-state";
 
 export default function FarmerDashboard() {
   const [result, setResult] = useState<PredictionResult | null>(null);
@@ -75,12 +76,12 @@ export default function FarmerDashboard() {
         >
             <div className="flex items-center justify-between space-x-4">
                 <h2 className="text-3xl font-bold font-headline text-foreground">
-                    Farmer Dashboard
+                    Get a New Prediction
                 </h2>
                 <CollapsibleTrigger asChild>
-                   <Button variant="ghost" size="sm" className="w-9 p-0">
+                   <Button variant="ghost" size="sm" className="w-auto p-2 h-auto">
                      <h4 className="flex items-center gap-2 font-semibold">
-                       {isFormOpen ? 'Close' : 'Get New Prediction'}
+                       {isFormOpen ? 'Close Form' : 'Start Here'}
                        {isFormOpen ? <ChevronsUp className="h-4 w-4" /> : <ChevronsDown className="h-4 w-4" />}
                      </h4>
                      <span className="sr-only">Toggle Prediction Form</span>
@@ -94,18 +95,22 @@ export default function FarmerDashboard() {
         </Collapsible>
         
         <div className="animate-in fade-in duration-500 space-y-8">
+            {!result && !isLoading && <InitialState />}
             {isLoading && <ResultsSkeleton />}
             {result && (
             <>
                 <ResultsDisplay result={result} />
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-3">
+                    <div className="lg:col-span-2">
                         <MarketPrices 
                             crop={selectedCrop} 
                             region={currentRegion?.label || "Odisha"}
                             marketData={marketData}
                             isLoading={isMarketLoading}
                         />
+                    </div>
+                     <div className="lg:col-span-1">
+                        <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} />
                     </div>
                 </div>
             </>
@@ -114,14 +119,11 @@ export default function FarmerDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-                <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} showInitialState={!result}/>
+                 <PastPredictions />
             </div>
             <div className="lg:col-span-1">
                 <Notifications />
             </div>
-        </div>
-        <div className="lg:col-span-3">
-            <PastPredictions />
         </div>
     </div>
   );

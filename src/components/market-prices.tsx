@@ -17,7 +17,7 @@ export default function MarketPrices({ crop, region, marketData, isLoading }: Ma
     const cropLabel = crop.charAt(0).toUpperCase() + crop.slice(1);
     
     return (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg h-full">
             <CardHeader>
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">

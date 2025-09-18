@@ -13,18 +13,18 @@ const mockData = [
   { name: '2024 (P)', yield: 3.2, allCrops: 2.9 },
 ];
 
-export default function CropStatistics({ crop, region, showInitialState = false }: { crop: string, region: string, showInitialState?: boolean }) {
+export default function CropStatistics({ crop, region }: { crop: string, region: string }) {
     const regionLabel = region.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     const cropLabel = crop.charAt(0).toUpperCase() + crop.slice(1);
     
-    const title = showInitialState ? "Historical Yield for All Crops" : `Historical Yield for ${cropLabel}`;
+    const title = `Historical Yield for ${cropLabel}`;
     const description = `Yield data in ${regionLabel} over the last 5 years.`;
-    const dataKey = showInitialState ? "allCrops" : "yield";
-    const barName = showInitialState ? "Avg. Yield (tons/hectare)" : "Yield (tons/hectare)";
+    const dataKey = "yield";
+    const barName = "Yield (tons/hectare)";
 
 
     return (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg h-full">
             <CardHeader>
                 <CardTitle className="font-headline text-xl">{title}</CardTitle>
                 <CardDescription>{description}</CardDescription>
@@ -34,7 +34,7 @@ export default function CropStatistics({ crop, region, showInitialState = false 
                     <BarChart data={mockData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
-                        <YAxis label={{ value: 'Yield (tons/hectare)', angle: -90, position: 'insideLeft' }} />
+                        <YAxis label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
                         <Legend />
                         <Bar dataKey={dataKey} fill="hsl(var(--primary))" name={barName} />
