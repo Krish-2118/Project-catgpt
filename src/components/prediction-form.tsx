@@ -56,16 +56,16 @@ export default function PredictionForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      crop: "",
-      region: "",
+      crop: "rice",
+      region: "odisha",
     },
   });
 
   return (
-    <Card className="shadow-lg border-2 border-primary/20">
+    <Card className="shadow-lg border-2 border-primary/10">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">Yield Prediction Parameters</CardTitle>
-        <CardDescription>Select a crop, region, and date range to get your prediction.</CardDescription>
+        <CardTitle className="font-headline text-2xl">Get Your Crop Yield Prediction</CardTitle>
+        <CardDescription>Select a crop and date range for Odisha to get your forecast.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -103,7 +103,7 @@ export default function PredictionForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Region (State)</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled>
                       <FormControl>
                         <SelectTrigger>
                           <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -128,7 +128,7 @@ export default function PredictionForm({
                 name="dateRange"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Growing Season Date Range</FormLabel>
+                    <FormLabel>Growing Season</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -172,7 +172,7 @@ export default function PredictionForm({
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={isLoading} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Button type="submit" disabled={isLoading} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
