@@ -52,11 +52,11 @@ const prompt = ai.definePrompt({
 
   **Your Recommendations:**
 
-  - **Irrigation:** Based on the crop's water needs, the land's irrigation source, and topography, provide a specific irrigation schedule and method.
+  - **Irrigation:** Based on the crop's water needs, the land's irrigation source, and topography, provide a specific irrigation schedule and method. For example, if the soil is sandy and the weather is dry, recommend drip irrigation every 2 days.
   
-  - **Fertilization:** Based on the soil type and crop, recommend a specific nutrient management plan (N-P-K ratio) and application timeline.
+  - **Fertilization:** Based on the soil type and crop, recommend a specific nutrient management plan (N-P-K ratio) and application timeline. Be specific about the type of fertilizer (e.g., urea, DAP) and the application stages (e.g., basal, top dressing).
 
-  - **Pest Control:** Based on the crop, region, and common vulnerabilities, suggest integrated pest management (IPM) techniques and specific actions to prevent common pests.`,
+  - **Pest Control:** Based on the crop, region, and common vulnerabilities, suggest integrated pest management (IPM) techniques and specific actions to prevent common pests. Mention specific, locally available organic or chemical solutions if applicable.`,
 });
 
 const provideActionableRecommendationsFlow = ai.defineFlow(
