@@ -5,7 +5,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets } from "lucide-react";
+import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
