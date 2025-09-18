@@ -5,11 +5,9 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft, Sprout, Wind, Droplet, Lightbulb, Tractor, Check } from "lucide-react";
+import { CalendarIcon, Wheat, MapPin, Loader2, ArrowRight, ArrowLeft, Sprout, Wind, Droplet, Lightbulb, Tractor, Check, Sun, Cloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -20,7 +18,6 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { crops, indianStates } from "@/lib/data";
-import { DateRange } from "react-day-picker";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCropSuggestions, SuggestionResult } from "@/app/actions";
@@ -33,13 +30,7 @@ export const formSchema = z.object({
   landDetails: landDetailsSchema,
   crop: z.string().min(1, "Please select a crop."),
   region: z.string().min(1, "Please select a region."),
-  dateRange: z.object(
-    {
-      from: z.date({ required_error: "Start date is required." }),
-      to: z.date({ required_error: "End date is required." }),
-    },
-    { required_error: "Please select a date range." }
-  ),
+  sowingSeason: z.string().min(1, "Please select a sowing season."),
 });
 
 type PredictionFormProps = {
@@ -63,6 +54,12 @@ const cropIcons: { [key: string]: React.ReactNode } = {
     default: <Wheat className="h-8 w-8 text-primary/80"/>
 }
 
+const seasons = [
+    { id: 'kharif', name: 'Kharif (Monsoon)', icon: <Cloud className="h-8 w-8 text-blue-400"/>, description: "June - Oct" },
+    { id: 'rabi', name: 'Rabi (Winter)', icon: <Sun className="h-8 w-8 text-yellow-400"/>, description: "Oct - Mar" },
+    { id: 'zaid', name: 'Zaid (Summer)', icon: <Sun className="h-8 w-8 text-orange-400"/>, description: "Mar - June" },
+]
+
 
 export default function PredictionForm({
   onSubmit,
@@ -83,6 +80,7 @@ export default function PredictionForm({
       },
       crop: "",
       region: "odisha",
+      sowingSeason: "",
     },
   });
 
@@ -112,7 +110,7 @@ export default function PredictionForm({
     } else if (currentStep === 1) {
       isValid = await trigger("crop");
     } else if (currentStep === 2) {
-      isValid = await trigger("dateRange");
+      isValid = await trigger("sowingSeason");
     }
     
     if (isValid && currentStep < steps.length - 1) {
@@ -251,35 +249,47 @@ export default function PredictionForm({
 
             {currentStep === 2 && (
                 <motion.div
-                key="season"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.3 }}
-                className="flex flex-col items-center space-y-4"
-              >
-                <h3 className="text-lg font-semibold">Step 3: Select the Growing Season</h3>
-                <FormField
-                  control={form.control}
-                  name="dateRange"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col items-center">
-                      <FormControl>
-                        <Calendar
-                          initialFocus
-                          mode="range"
-                          defaultMonth={field.value?.from}
-                          selected={field.value as DateRange}
-                          onSelect={field.onChange}
-                          numberOfMonths={2}
-                          className="p-0"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </motion.div>
+                    key="season"
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-6"
+                >
+                    <div className="text-center">
+                        <h3 className="text-lg font-semibold">Step 3: Select the Sowing Season</h3>
+                        <p className="text-muted-foreground">Choose the appropriate season for your crop.</p>
+                    </div>
+                    <FormField
+                        control={form.control}
+                        name="sowingSeason"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                                        {seasons.map((season) => (
+                                            <Card
+                                                key={season.id}
+                                                onClick={() => field.onChange(season.id)}
+                                                className={cn(
+                                                    "cursor-pointer transition-all hover:shadow-md text-center",
+                                                    field.value === season.id ? "border-primary ring-2 ring-primary" : "border-border"
+                                                )}
+                                            >
+                                                <CardContent className="p-4 flex flex-col items-center justify-center gap-2 aspect-square">
+                                                    {season.icon}
+                                                    <span className="font-semibold text-lg">{season.name}</span>
+                                                    <span className="text-muted-foreground text-sm">{season.description}</span>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                </FormControl>
+                                <FormMessage className="text-center" />
+                            </FormItem>
+                        )}
+                    />
+                </motion.div>
             )}
             
             {currentStep === 3 && (
@@ -313,8 +323,7 @@ export default function PredictionForm({
                          <div className="text-center">
                             <p className="text-muted-foreground">Season</p>
                              <p className="font-bold text-lg">
-                                {getValues('dateRange.from') && format(getValues('dateRange.from'), "LLL dd, y")} - {' '}
-                                {getValues('dateRange.to') && format(getValues('dateRange.to'), "LLL dd, y")}
+                                {seasons.find(s => s.id === getValues('sowingSeason'))?.name}
                             </p>
                         </div>
                     </div>

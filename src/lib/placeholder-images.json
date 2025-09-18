@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "hero-image",
-      "description": "A vibrant illustration of a farmer in a lush green field with modern technology elements.",
-      "imageUrl": "https://picsum.photos/seed/farmtech/1200/400",
-      "imageHint": "farming technology"
+      "description": "A serene, moody picture of a farm at dawn with mist.",
+      "imageUrl": "https://picsum.photos/seed/mistyfarm/1200/400",
+      "imageHint": "misty farm"
     }
   ]
 }

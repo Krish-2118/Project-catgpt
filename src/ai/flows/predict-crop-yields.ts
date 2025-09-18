@@ -14,6 +14,7 @@ const PredictCropYieldsInputSchema = z.object({
   cropType: z.string().describe('The type of crop to predict the yield for.'),
   region: z.string().describe('The region in India for which to predict the yield.'),
   landDescription: z.string().describe('A detailed description of the farm land, including soil type, topography, and location within the region.'),
+  sowingSeason: z.string().describe('The sowing season (e.g., Kharif, Rabi, Zaid).'),
   historicalData: z.string().describe('Historical agricultural data for the specified crop and region.'),
   weatherPatterns: z.string().describe('Weather patterns for the specified region.'),
   soilHealthMetrics: z.string().describe('Soil health metrics for the specified region.'),
@@ -37,10 +38,11 @@ const prompt = ai.definePrompt({
   output: {schema: PredictCropYieldsOutputSchema},
   prompt: `You are an expert agricultural advisor specializing in predicting crop yields in India.
 
-  Based on the following information, predict the crop yield for the specified crop and region, and provide actionable recommendations for farmers to optimize their farming practices. Your prediction should be more specific and nuanced based on the detailed land description provided.
+  Based on the following information, predict the crop yield for the specified crop and region, and provide actionable recommendations for farmers to optimize their farming practices. Your prediction should be more specific and nuanced based on the detailed land description and sowing season provided.
 
   Crop Type: {{{cropType}}}
   Region: {{{region}}}
+  Sowing Season: {{{sowingSeason}}}
   Land Description: {{{landDescription}}}
   Historical Data: {{{historicalData}}}
   Weather Patterns: {{{weatherPatterns}}}
