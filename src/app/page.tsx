@@ -1,13 +1,10 @@
 import FarmerDashboard from "@/components/farmer-dashboard";
-import Header from "@/components/layout/header";
+import AppLayout from "@/components/layout/app-layout";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <FarmerDashboard />
-      </main>
-    </div>
+    <AppLayout>
+      <FarmerDashboard />
+    </AppLayout>
   );
 }

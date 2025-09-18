@@ -33,13 +33,13 @@ export default function LandStatus() {
     );
 
     return (
-        <Card className="shadow-lg h-full">
+        <Card className="shadow-sm h-full">
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <Thermometer className="h-6 w-6 text-primary" />
                     <div>
-                        <CardTitle className="font-headline text-xl">Current Land Status</CardTitle>
-                        <CardDescription>AI-powered field diagnosis.</CardDescription>
+                        <CardTitle className="font-bold">Current Land Status</CardTitle>
+                        <CardDescription>AI-powered field diagnosis</CardDescription>
                     </div>
                 </div>
             </CardHeader>

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart, Sector } from "recharts"
+import { Label, Pie, PieChart } from "recharts"
 
 import {
   Card,
@@ -43,10 +43,10 @@ export default function RevenueChart() {
   }, [])
 
   return (
-    <Card className="flex flex-col shadow-lg">
-      <CardHeader className="items-center pb-0">
+    <Card className="flex flex-col shadow-sm h-full">
+      <CardHeader className="items-start pb-0">
         <CardTitle>Annual Revenue Breakdown</CardTitle>
-        <CardDescription>Revenue by Crop - Last 12 Months</CardDescription>
+        <CardDescription>By Crop - Last 12 Months</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -64,6 +64,13 @@ export default function RevenueChart() {
               nameKey="crop"
               innerRadius={80}
               strokeWidth={5}
+              activeIndex={0}
+              activeShape={({ outerRadius = 0, ...props }) => (
+                <g>
+                  <Sector {...props} outerRadius={outerRadius + 8} />
+                  <Sector {...props} outerRadius={outerRadius} />
+                </g>
+              )}
             >
               <Label
                 content={({ viewBox }) => {
@@ -98,7 +105,7 @@ export default function RevenueChart() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm pt-4">
+      <CardFooter className="flex-col gap-2 text-sm pt-4 items-start">
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4 text-green-500" />
         </div>
