@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { predictCropYields } from "@/ai/flows/predict-crop-yields";
 import { provideActionableRecommendations } from "@/ai/flows/provide-actionable-recommendations";
+import { getMarketIntelligence, MarketIntelligenceOutput } from "@/ai/flows/get-market-intelligence";
 
 const formSchema = z.object({
   crop: z.string().min(1, "Please select a crop."),
@@ -21,6 +22,8 @@ export type PredictionResult = {
     pestControl: string;
   };
 };
+
+export type MarketDataResult = MarketIntelligenceOutput;
 
 // Helper function to extract a number from a string
 const parseYield = (yieldString: string): number => {
@@ -73,4 +76,18 @@ export async function getIndiYieldPrediction(
     console.error("Error in AI prediction flow:", error);
     throw new Error("Failed to get prediction. Please try again.");
   }
+}
+
+
+export async function getMarketData(
+  crop: string,
+  region: string,
+): Promise<MarketDataResult> {
+    try {
+        const marketData = await getMarketIntelligence({ crop, region });
+        return marketData;
+    } catch (error) {
+        console.error("Error in AI market data flow:", error);
+        throw new Error("Failed to get market data. Please try again.");
+    }
 }

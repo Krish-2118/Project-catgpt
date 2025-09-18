@@ -1,41 +1,21 @@
 
-import { DollarSign, TrendingUp, TrendingDown, MapPin } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, MapPin, BrainCircuit, BarChart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { MarketDataResult } from "@/app/actions";
+import { Skeleton } from "./ui/skeleton";
 
-const mockMarketData: { [key: string]: { market: string; price: number; change: number; changeType: string }[] } = {
-    rice: [
-        { market: "Bhubaneswar", price: 2050, change: 1.5, changeType: "increase" },
-        { market: "Cuttack", price: 2020, change: -0.5, changeType: "decrease" },
-        { market: "Puri", price: 2080, change: 2.3, changeType: "increase" },
-        { market: "Sambalpur", price: 2040, change: 0.8, changeType: "increase" },
-    ],
-    wheat: [
-        { market: "Bhubaneswar", price: 2200, change: -0.2, changeType: "decrease" },
-        { market: "Cuttack", price: 2180, change: 1.1, changeType: "increase" },
-        { market: "Puri", price: 2250, change: 0.5, changeType: "increase" },
-        { market: "Sambalpur", price: 2210, change: -1.0, changeType: "decrease" },
-    ],
-    maize: [
-        { market: "Bhubaneswar", price: 1800, change: 2.1, changeType: "increase" },
-        { market: "Cuttack", price: 1780, change: 1.8, changeType: "increase" },
-        { market: "Puri", price: 1820, change: -0.3, changeType: "decrease" },
-        { market: "Sambalpur", price: 1790, change: 0.7, changeType: "increase" },
-    ],
-    default: [
-        { market: "Bhubaneswar", price: 1950, change: 0.0, changeType: "increase" },
-        { market: "Cuttack", price: 1920, change: 0.0, changeType: "decrease" },
-        { market: "Puri", price: 1980, change: 0.0, changeType: "increase" },
-        { market: "Sambalpur", price: 1940, change: 0.0, changeType: "increase" },
-    ]
-};
+type MarketPricesProps = {
+    crop: string;
+    region: string;
+    marketData: MarketDataResult | null;
+    isLoading: boolean;
+}
 
-
-export default function MarketPrices({ crop, region }: { crop: string, region: string }) {
+export default function MarketPrices({ crop, region, marketData, isLoading }: MarketPricesProps) {
     const cropLabel = crop.charAt(0).toUpperCase() + crop.slice(1);
-    const data = mockMarketData[crop] || mockMarketData.default;
-
+    
     return (
         <Card className="shadow-lg">
             <CardHeader>
@@ -44,7 +24,7 @@ export default function MarketPrices({ crop, region }: { crop: string, region: s
                          <DollarSign className="h-6 w-6 text-primary" />
                         <div>
                             <CardTitle className="font-headline text-xl">Live Market Prices for {cropLabel}</CardTitle>
-                            <CardDescription>Current mandi rates in major Odisha markets.</CardDescription>
+                            <CardDescription>AI-generated mandi rates in major Odisha markets.</CardDescription>
                         </div>
                     </div>
                      <Badge variant="outline" className="flex items-center gap-2">
@@ -54,29 +34,63 @@ export default function MarketPrices({ crop, region }: { crop: string, region: s
                 </div>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Market</TableHead>
-                            <TableHead className="text-right">Price (₹/Quintal)</TableHead>
-                            <TableHead className="text-right">24h Change</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {data.map((data) => (
-                            <TableRow key={data.market}>
-                                <TableCell className="font-medium">{data.market}</TableCell>
-                                <TableCell className="text-right font-semibold">₹{data.price.toLocaleString()}</TableCell>
-                                <TableCell className="text-right">
-                                    <Badge variant={data.changeType === 'increase' ? 'default' : 'destructive'} className={`flex items-center justify-end gap-1 w-20 ${data.changeType === 'increase' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                        {data.changeType === 'increase' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                                        {data.change}%
-                                    </Badge>
-                                </TableCell>
+                {isLoading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-8 w-full" />
+                        <Skeleton className="h-8 w-full" />
+                        <Skeleton className="h-8 w-full" />
+                        <Skeleton className="h-8 w-full" />
+                        <Skeleton className="h-16 w-full mt-4" />
+
+                    </div>
+                ) : marketData ? (
+                    <>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Market</TableHead>
+                                <TableHead className="text-right">Price (₹/Quintal)</TableHead>
+                                <TableHead className="text-right">24h Change</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {marketData.prices.map((data) => (
+                                <TableRow key={data.market}>
+                                    <TableCell className="font-medium">{data.market}</TableCell>
+                                    <TableCell className="text-right font-semibold">₹{data.price.toLocaleString()}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Badge variant={data.changeType === 'increase' ? 'default' : 'destructive'} className={`flex items-center justify-end gap-1 w-24 ${data.changeType === 'increase' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                            {data.changeType === 'increase' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+                                            {data.change.toFixed(1)}%
+                                        </Badge>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <div className="mt-6 space-y-4">
+                        <div className="p-4 bg-muted/50 rounded-lg border">
+                            <h4 className="flex items-center gap-2 font-semibold mb-2">
+                                <BarChart className="h-5 w-5 text-primary"/>
+                                Trend Analysis
+                            </h4>
+                            <p className="text-sm text-muted-foreground">{marketData.trendAnalysis}</p>
+                        </div>
+                         <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+                            <h4 className="flex items-center gap-2 font-semibold mb-2 text-primary">
+                                <BrainCircuit className="h-5 w-5"/>
+                                AI Recommendation
+                            </h4>
+                            <p className="text-sm text-foreground">{marketData.recommendation}</p>
+                        </div>
+                    </div>
+                    </>
+                ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                        Select a crop to see market data.
+                    </div>
+                )}
+
             </CardContent>
         </Card>
     )
