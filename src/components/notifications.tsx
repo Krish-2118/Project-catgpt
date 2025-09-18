@@ -1,31 +1,31 @@
 "use client";
 
-import { AlertCircle, DollarSign, CloudRain } from "lucide-react";
+import { AlertTriangle, DollarSign, CloudRain, Bell } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "./ui/badge";
+import { cn } from "@/lib/utils";
 
 const mockNotifications = [
     {
         id: "pest-alert-1",
         type: "pest",
-        title: "Pest Alert: Stem Borer",
-        description: "Increased stem borer activity detected in your district. Monitor your paddy fields closely.",
+        title: "Pest Alert: Stem Borer Activity Detected",
+        description: "Increased stem borer activity detected in your district. Monitor your paddy fields closely for signs of infestation.",
         date: "2 days ago",
         read: false,
     },
     {
         id: "weather-alert-1",
         type: "weather",
-        title: "Weather Update: Heavy Rainfall",
-        description: "Heavy rainfall expected in the next 48 hours. Ensure proper drainage to avoid waterlogging.",
+        title: "Weather Update: Heavy Rainfall Forecast",
+        description: "Heavy rainfall is expected in the next 48 hours. Ensure proper drainage is in place to avoid waterlogging in your fields.",
         date: "1 day ago",
         read: false,
     },
     {
         id: "market-alert-1",
         type: "market",
-        title: "Market Insight: Cotton Prices",
-        description: "Cotton prices have increased by 3% in major mandis. Consider timing your sale.",
+        title: "Market Insight: Cotton Prices Surge",
+        description: "Cotton prices have increased by 3% in major regional mandis. This may be a good time to consider selling your stock.",
         date: "5 days ago",
         read: true,
     },
@@ -33,10 +33,10 @@ const mockNotifications = [
 
 const getNotificationIcon = (type: string) => {
     switch (type) {
-        case 'pest': return <AlertCircle className="h-5 w-5 text-red-500" />;
+        case 'pest': return <AlertTriangle className="h-5 w-5 text-red-500" />;
         case 'weather': return <CloudRain className="h-5 w-5 text-blue-500" />;
         case 'market': return <DollarSign className="h-5 w-5 text-green-500" />;
-        default: return <AlertCircle className="h-5 w-5" />;
+        default: return <Bell className="h-5 w-5" />;
     }
 }
 
@@ -45,29 +45,33 @@ export default function Notifications() {
         <Card className="shadow-sm h-full">
             <CardHeader>
                 <div className="flex items-center gap-3">
-                    <AlertCircle className="h-6 w-6 text-primary" />
+                    <Bell className="h-6 w-6 text-primary" />
                     <div>
                         <CardTitle className="font-bold">Notifications & Alerts</CardTitle>
                         <CardDescription>AI-driven updates for your farm</CardDescription>
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-                {mockNotifications.map(notif => (
-                    <div key={notif.id} className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div>
-                           {getNotificationIcon(notif.type)}
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex justify-between items-center">
-                                <p className="font-semibold">{notif.title}</p>
-                                {!notif.read && <Badge className="bg-primary hover:bg-primary/90">New</Badge>}
+            <CardContent className="p-0">
+                <div className="space-y-1">
+                    {mockNotifications.map(notif => (
+                        <div key={notif.id} className="flex items-start gap-4 p-4 hover:bg-muted/50 transition-colors">
+                            <div className="mt-1">
+                                {getNotificationIcon(notif.type)}
                             </div>
-                            <p className="text-sm text-muted-foreground">{notif.description}</p>
-                            <p className="text-xs text-muted-foreground/70 mt-1">{notif.date}</p>
+                            <div className="flex-1 space-y-1">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-sm font-medium leading-none">{notif.title}</p>
+                                    <p className="text-xs text-muted-foreground">{notif.date}</p>
+                                </div>
+                                <p className="text-sm text-muted-foreground">{notif.description}</p>
+                            </div>
+                            {!notif.read && (
+                                <div className="h-2 w-2 rounded-full bg-primary mt-2"></div>
+                            )}
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </CardContent>
         </Card>
     );
