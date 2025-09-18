@@ -75,7 +75,7 @@ export default function LandDetailsForm() {
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select soil type" />
-                  </Trigger>
+                  </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                    {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
@@ -95,7 +95,7 @@ export default function LandDetailsForm() {
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select irrigation source" />
-                  </SelectTrigger>
+                  </SelectTrigger>_
                 </FormControl>
                 <SelectContent>
                   {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
@@ -115,7 +115,7 @@ export default function LandDetailsForm() {
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select topography" />
-                  </Tselectrigger>
+                  </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {topographies.map(t => <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>)}
