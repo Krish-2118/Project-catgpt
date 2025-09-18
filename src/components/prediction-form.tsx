@@ -5,7 +5,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout } from "lucide-react";
+import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout, Leaf } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,8 +48,8 @@ const cropIcons: { [key: string]: React.ReactNode } = {
     rice: <Droplets className="h-8 w-8 text-blue-400"/>,
     wheat: <Wheat className="h-8 w-8 text-yellow-600"/>,
     maize: <Sprout className="h-8 w-8 text-green-500"/>,
-    sugarcane: <Sprout className="h-8 w-8 text-green-600"/>,
-    cotton: <div className="h-8 w-8 text-gray-400 font-bold text-3xl">C</div>, // Custom for cotton
+    sugarcane: <Leaf className="h-8 w-8 text-green-600"/>,
+    cotton: <div className="h-8 w-8 text-gray-200 font-bold text-3xl flex items-center justify-center">*</div>,
     default: <Wheat className="h-8 w-8 text-yellow-600"/>
 }
 
@@ -100,7 +100,6 @@ export default function PredictionForm({
           const result = await getCropSuggestions(landDescription, getValues('region'));
           setSuggestions(result);
         } catch (e) {
-            // Handle error appropriately
             console.error(e);
         } finally {
             setIsLoading(false);
@@ -125,19 +124,7 @@ export default function PredictionForm({
   const isFormLoading = isLoading || isLoadingExternally;
 
   return (
-    <Card className="shadow-lg border-2 border-primary/10 overflow-hidden bg-card/50">
-        <CardHeader className="bg-card">
-            <div className="flex justify-between items-start">
-                <div>
-                    <CardTitle className="font-headline text-2xl">Get Your Yield Prediction</CardTitle>
-                    <CardDescription>A guided AI experience for farmers in Odisha.</CardDescription>
-                </div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-                    <span>{indianStates.find(s => s.value === 'odisha')?.label}</span>
-                </div>
-            </div>
-        </CardHeader>
-      <CardContent className="p-4 md:p-8">
+    <div className="w-full max-w-4xl mx-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
@@ -152,8 +139,8 @@ export default function PredictionForm({
                 className="space-y-4"
                 >
                 <div className="text-center">
-                    <h3 className="text-lg font-semibold">Step 1: Describe Your Land</h3>
-                    <p className="text-muted-foreground">Provide details about your farmland for a more accurate prediction.</p>
+                    <h2 className="text-3xl font-bold font-headline">Welcome to IndiYield</h2>
+                    <p className="text-muted-foreground mt-2">Let's start by getting some details about your farm.</p>
                 </div>
                 <LandDetailsForm />
               </motion.div>
@@ -169,8 +156,8 @@ export default function PredictionForm({
                 className="space-y-6"
                 >
                 <div className="text-center">
-                    <h3 className="text-lg font-semibold">Step 2: Select Your Crop</h3>
-                    <p className="text-muted-foreground">Based on your land, we suggest these crops. Choose one or select another from the list.</p>
+                    <h3 className="text-2xl font-bold">Select Your Crop</h3>
+                    <p className="text-muted-foreground mt-1">Based on your land, we suggest these crops. Choose one or select another from the list.</p>
                 </div>
                 
                  {isLoading ? (
@@ -232,7 +219,7 @@ export default function PredictionForm({
                           ))}
                         </div>
                       </FormControl>
-                      <FormMessage className="text-center" />
+                      <FormMessage className="text-center pt-4" />
                     </FormItem>
                   )}
                 />
@@ -249,8 +236,8 @@ export default function PredictionForm({
                     className="space-y-6"
                 >
                     <div className="text-center">
-                        <h3 className="text-lg font-semibold">Step 3: Select the Sowing Season</h3>
-                        <p className="text-muted-foreground">Choose the appropriate season for your crop.</p>
+                        <h3 className="text-2xl font-bold">Select the Sowing Season</h3>
+                        <p className="text-muted-foreground mt-1">Choose the appropriate season for your crop.</p>
                     </div>
                     <FormField
                         control={form.control}
@@ -277,7 +264,7 @@ export default function PredictionForm({
                                         ))}
                                     </div>
                                 </FormControl>
-                                <FormMessage className="text-center" />
+                                <FormMessage className="text-center pt-4" />
                             </FormItem>
                         )}
                     />
@@ -293,32 +280,37 @@ export default function PredictionForm({
                     transition={{ duration: 0.3 }}
                     className="text-center space-y-6"
                  >
-                    <h3 className="text-xl font-semibold">Confirm Your Selection</h3>
-                     <div className="bg-card p-6 rounded-lg max-w-2xl mx-auto text-left space-y-4 border">
-                        <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
-                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                            <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
-                            <p><strong className="text-muted-foreground">Soil Type:</strong> {getValues('landDetails.soilType')}</p>
-                             <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource')}</p>
-                            <p><strong className="text-muted-foreground">Topography:</strong> {getValues('landDetails.topography')}</p>
-                        </div>
-                    </div>
-                    <div className="flex justify-center items-center gap-8">
-                        <div className="text-center">
-                            <p className="text-muted-foreground">Crop</p>
-                            <p className="font-bold text-lg">{selectedCrop?.label}</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-muted-foreground">Region</p>
-                            <p className="font-bold text-lg">Odisha</p>
-                        </div>
-                         <div className="text-center">
-                            <p className="text-muted-foreground">Season</p>
-                             <p className="font-bold text-lg">
-                                {seasons.find(s => s.id === getValues('sowingSeason'))?.name}
-                            </p>
-                        </div>
-                    </div>
+                    <h3 className="text-2xl font-bold">Confirm Your Selection</h3>
+                     <Card className="max-w-2xl mx-auto text-left bg-card/50">
+                        <CardHeader>
+                            <CardTitle>Prediction Summary</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
+                            <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                                <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
+                                <p><strong className="text-muted-foreground">Soil Type:</strong> {getValues('landDetails.soilType')}</p>
+                                <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource')}</p>
+                                <p><strong className="text-muted-foreground">Topography:</strong> {getValues('landDetails.topography')}</p>
+                            </div>
+                             <div className="flex justify-around items-center pt-4">
+                                <div className="text-center">
+                                    <p className="text-muted-foreground text-sm">Crop</p>
+                                    <p className="font-bold text-lg">{selectedCrop?.label}</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-muted-foreground text-sm">Region</p>
+                                    <p className="font-bold text-lg">Odisha</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-muted-foreground text-sm">Season</p>
+                                    <p className="font-bold text-lg">
+                                        {seasons.find(s => s.id === getValues('sowingSeason'))?.name}
+                                    </p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                      <p className="text-muted-foreground max-w-md mx-auto">
                         You're all set! Click the button below to generate your personalized crop yield prediction and recommendations.
                     </p>
@@ -327,17 +319,17 @@ export default function PredictionForm({
             </AnimatePresence>
 
 
-            <div className="flex justify-between pt-4">
+            <div className="flex justify-between pt-8">
               {currentStep > 0 ? (
                 <Button type="button" variant="outline" onClick={prevStep} disabled={isFormLoading}>
-                  <ArrowLeft className="mr-2" />
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
               ) : <div />}
 
               {currentStep < steps.length - 1 && (
-                <Button type="button" onClick={nextStep} disabled={isFormLoading}>
-                 { isLoading ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2" /> </>}
+                <Button type="button" onClick={nextStep} disabled={isFormLoading} size="lg">
+                 { isLoading ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2 h-4 w-4" /> </>}
                 </Button>
               )}
 
@@ -346,7 +338,7 @@ export default function PredictionForm({
                   {isLoadingExternally ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating...
+                      Generating Prediction...
                     </>
                   ) : (
                     "Get Prediction"
@@ -356,7 +348,6 @@ export default function PredictionForm({
             </div>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

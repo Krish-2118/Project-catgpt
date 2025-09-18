@@ -32,7 +32,7 @@ export default function FarmerDashboard() {
   const { toast } = useToast();
   const [selectedRegion, setSelectedRegion] = useState("odisha");
   const [selectedCrop, setSelectedCrop] = useState("rice");
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(true);
 
 
   const handleFormSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -67,35 +67,14 @@ export default function FarmerDashboard() {
   
   const currentRegion = indianStates.find(s => s.value === selectedRegion);
 
+  if (!result && !isLoading) {
+    return <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />;
+  }
+
   return (
     <div className="space-y-8">
-        <Collapsible
-            open={isFormOpen}
-            onOpenChange={setIsFormOpen}
-            className="w-full"
-        >
-            <div className="flex items-center justify-between space-x-4">
-                <h2 className="text-3xl font-bold font-headline text-foreground">
-                    Get a New Prediction
-                </h2>
-                <CollapsibleTrigger asChild>
-                   <Button variant="ghost" size="sm" className="w-auto p-2 h-auto">
-                     <h4 className="flex items-center gap-2 font-semibold">
-                       {isFormOpen ? 'Close Form' : 'Start Here'}
-                       {isFormOpen ? <ChevronsUp className="h-4 w-4" /> : <ChevronsDown className="h-4 w-4" />}
-                     </h4>
-                     <span className="sr-only">Toggle Prediction Form</span>
-                   </Button>
-                </CollapsibleTrigger>
-            </div>
-            
-            <CollapsibleContent className="space-y-8 pt-8">
-                <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />
-            </CollapsibleContent>
-        </Collapsible>
         
         <div className="animate-in fade-in duration-500 space-y-8">
-            {!result && !isLoading && <InitialState />}
             {isLoading && <ResultsSkeleton />}
             {result && (
             <>
@@ -117,14 +96,11 @@ export default function FarmerDashboard() {
             )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-                 <PastPredictions />
-            </div>
-            <div className="lg:col-span-1">
-                <Notifications />
-            </div>
-        </div>
+         {result && 
+          <div className="flex justify-center">
+            <Button onClick={() => setResult(null)}>Make another prediction</Button>
+          </div>
+        }
     </div>
   );
 }

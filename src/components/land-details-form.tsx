@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormContext } from "react-hook-form";
@@ -16,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+
 
 export const landDetailsSchema = z.object({
   district: z.string().min(1, "Please select a district."),
@@ -41,89 +44,95 @@ export default function LandDetailsForm() {
   const { control } = useFormContext();
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 p-6 bg-card rounded-lg border">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          control={control}
-          name="landDetails.district"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>District</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a district" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {odishaDistricts.map(d => <SelectItem key={d} value={d.toLowerCase()}>{d}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={control}
-          name="landDetails.soilType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Predominant Soil Type</FormLabel>
-               <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select soil type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                   {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="landDetails.irrigationSource"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Primary Irrigation Source</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select irrigation source" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="landDetails.topography"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Land Topography</FormLabel>
-               <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select topography" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {topographies.map(t => <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-    </div>
+    <Card className="max-w-2xl mx-auto border-2 border-primary/10 bg-card/50">
+        <CardHeader>
+            <CardTitle>Describe Your Land</CardTitle>
+            <CardDescription>Provide details about your farmland for a more accurate prediction.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                control={control}
+                name="landDetails.district"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>District</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a district" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        {odishaDistricts.map(d => <SelectItem key={d} value={d.toLowerCase()}>{d}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={control}
+                name="landDetails.soilType"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Predominant Soil Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select soil type" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={control}
+                name="landDetails.irrigationSource"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Primary Irrigation Source</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select irrigation source" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={control}
+                name="landDetails.topography"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Land Topography</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select topography" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        {topographies.map(t => <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
+        </CardContent>
+    </Card>
   );
 }
