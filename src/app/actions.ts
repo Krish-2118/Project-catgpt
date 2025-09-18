@@ -39,7 +39,7 @@ export async function getCropSuggestions(landDescription: string, region: string
 
 
 export async function getIndiYieldPrediction(
-  data: z.infer<typeof formSchema>
+  data: z.infer<typeof formSchema> & { landDescription: string }
 ): Promise<PredictionResult> {
   try {
     const { crop, region, dateRange, landDescription } = data;
@@ -47,7 +47,7 @@ export async function getIndiYieldPrediction(
     // In a real application, these would be fetched from various data sources/APIs
     const mockHistoricalData = `Historical data for ${crop} in ${region} shows an average yield of 2.8 tons/hectare.`;
     const mockWeatherPatterns = `The region of ${region} typically experiences a monsoon season from June to September.`;
-    const mockSoilHealthMetrics = `Soil in ${region} is predominantly alluvial with a pH of 7.2.`;
+    const mockSoilHealthMetrics = `Soil in this part of ${region} is predominantly ${data.landDetails.soilType}.`;
     const mockLongRangeForecast = `The forecast for the period ${dateRange.from.toDateString()} to ${dateRange.to.toDateString()} predicts slightly above-average rainfall.`;
 
     // 1. Predict Crop Yield

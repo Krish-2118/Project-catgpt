@@ -43,7 +43,7 @@ export const formSchema = z.object({
 });
 
 type PredictionFormProps = {
-  onSubmit: (data: z.infer<typeof formSchema>) => void;
+  onSubmit: (data: z.infer<typeof formSchema> & { landDescription: string }) => void;
   isLoadingExternally: boolean;
 };
 
@@ -115,7 +115,7 @@ export default function PredictionForm({
       isValid = await trigger("dateRange");
     }
     
-    if (isValid) {
+    if (isValid && currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -148,7 +148,7 @@ export default function PredictionForm({
                 ...data,
                 landDescription: landDetailsToString(data.landDetails),
             };
-            onSubmit(formData as any);
+            onSubmit(formData);
           })} className="space-y-8">
             <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
             <AnimatePresence mode="wait">
@@ -359,5 +359,3 @@ export default function PredictionForm({
     </Card>
   );
 }
-
-    
