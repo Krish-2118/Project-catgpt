@@ -23,13 +23,14 @@ import { crops, indianStates } from "@/lib/data";
 import { DateRange } from "react-day-picker";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { Textarea } from "./ui/textarea";
 import { getCropSuggestions, SuggestionResult } from "@/app/actions";
 import { Skeleton } from "./ui/skeleton";
 import { SuggestedCrop } from "@/ai/flows/suggest-crop";
+import LandDetailsForm, { landDetailsSchema, LandDetailsValues } from "./land-details-form";
+
 
 export const formSchema = z.object({
-  landDescription: z.string().min(20, "Please provide a more detailed description of your land (at least 20 characters)."),
+  landDetails: landDetailsSchema,
   crop: z.string().min(1, "Please select a crop."),
   region: z.string().min(1, "Please select a region."),
   dateRange: z.object(
@@ -74,22 +75,32 @@ export default function PredictionForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      landDescription: "",
+      landDetails: {
+        soilType: "",
+        irrigationSource: "",
+        topography: "",
+        district: "",
+      },
       crop: "",
       region: "odisha",
     },
   });
 
   const { trigger, getValues, setValue } = form;
+  
+  const landDetailsToString = (details: LandDetailsValues): string => {
+    return `The farm is located in ${details.district} district. The soil is primarily ${details.soilType}, with irrigation from ${details.irrigationSource}. The land topography is ${details.topography}.`;
+  }
 
   const nextStep = async () => {
     let isValid = false;
     if (currentStep === 0) {
-      isValid = await trigger("landDescription");
+      isValid = await trigger("landDetails");
       if (isValid) {
         setIsLoading(true);
         try {
-          const result = await getCropSuggestions(getValues('landDescription'), getValues('region'));
+          const landDescription = landDetailsToString(getValues('landDetails'));
+          const result = await getCropSuggestions(landDescription, getValues('region'));
           setSuggestions(result);
         } catch (e) {
             // Handle error appropriately
@@ -132,7 +143,13 @@ export default function PredictionForm({
         </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit((data) => {
+            const formData = {
+                ...data,
+                landDescription: landDetailsToString(data.landDetails),
+            };
+            onSubmit(formData as any);
+          })} className="space-y-8">
             <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
@@ -144,22 +161,11 @@ export default function PredictionForm({
                 transition={{ duration: 0.3 }}
                 className="space-y-4"
                 >
-                <h3 className="text-lg font-semibold text-center">Step 1: Describe Your Land</h3>
-                 <FormField
-                  control={form.control}
-                  name="landDescription"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col items-center">
-                      <FormLabel className="text-center w-full">
-                        Tell us about your farm land. e.g., "My farm is in the coastal area of Puri district. The soil is mostly sandy loam, and I have access to canal irrigation."
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea {...field} className="min-h-[100px] max-w-lg" placeholder="Describe your land here..."/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="text-center">
+                    <h3 className="text-lg font-semibold">Step 1: Describe Your Land</h3>
+                    <p className="text-muted-foreground">Provide details about your farmland for a more accurate prediction.</p>
+                </div>
+                <LandDetailsForm />
               </motion.div>
             )}
 
@@ -286,9 +292,14 @@ export default function PredictionForm({
                     className="text-center space-y-6"
                  >
                     <h3 className="text-xl font-semibold">Confirm Your Selection</h3>
-                     <div className="bg-muted/50 p-4 rounded-lg max-w-2xl mx-auto text-left">
-                        <h4 className="font-semibold mb-2">Land Details:</h4>
-                        <p className="text-sm text-muted-foreground italic">"{getValues('landDescription')}"</p>
+                     <div className="bg-muted/50 p-6 rounded-lg max-w-2xl mx-auto text-left space-y-4">
+                        <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                            <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
+                            <p><strong className="text-muted-foreground">Soil Type:</strong> {getValues('landDetails.soilType')}</p>
+                             <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource')}</p>
+                            <p><strong className="text-muted-foreground">Topography:</strong> {getValues('landDetails.topography')}</p>
+                        </div>
                     </div>
                     <div className="flex justify-center items-center gap-8">
                         <div className="text-center">
@@ -348,3 +359,5 @@ export default function PredictionForm({
     </Card>
   );
 }
+
+    
