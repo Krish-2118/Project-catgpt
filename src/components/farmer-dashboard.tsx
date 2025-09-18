@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -13,8 +12,10 @@ import InitialState from "./initial-state";
 import MarketPrices from "./market-prices";
 import CropStatistics from "./crop-statistics";
 import { indianStates } from "@/lib/data";
+import PastPredictions from "./past-predictions";
+import Notifications from "./notifications";
 
-export default function DashboardV2() {
+export default function FarmerDashboard() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [marketData, setMarketData] = useState<MarketDataResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,31 +57,38 @@ export default function DashboardV2() {
   const currentRegion = indianStates.find(s => s.value === selectedRegion);
 
   return (
-    <div className="space-y-8">
-      <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />
-      
-      <div className="animate-in fade-in duration-500">
-        {isLoading && <ResultsSkeleton />}
-        {!isLoading && result && (
-          <>
-            <ResultsDisplay result={result} />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-              <div className="lg:col-span-3">
-                <MarketPrices 
-                    crop={selectedCrop} 
-                    region={currentRegion?.label || "Odisha"}
-                    marketData={marketData}
-                    isLoading={isMarketLoading}
-                />
-              </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+            <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />
+            
+            <div className="animate-in fade-in duration-500">
+                {isLoading && <ResultsSkeleton />}
+                {!isLoading && result && (
+                <>
+                    <ResultsDisplay result={result} />
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+                    <div className="lg:col-span-3">
+                        <MarketPrices 
+                            crop={selectedCrop} 
+                            region={currentRegion?.label || "Odisha"}
+                            marketData={marketData}
+                            isLoading={isMarketLoading}
+                        />
+                    </div>
+                    </div>
+                    <div className="mt-8">
+                        <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} />
+                    </div>
+                </>
+                )}
+                {!isLoading && !result && <InitialState />}
             </div>
-            <div className="mt-8">
-                <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} />
-            </div>
-          </>
-        )}
-        {!isLoading && !result && <InitialState />}
-      </div>
+        </div>
+        <div className="lg:col-span-1 space-y-8">
+            <Notifications />
+            <PastPredictions />
+        </div>
     </div>
+
   );
 }
