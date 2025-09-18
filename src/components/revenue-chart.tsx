@@ -50,7 +50,7 @@ const chartConfig = {
     label: "Maize",
     color: "hsl(var(--chart-5))",
   },
-} satisfies React.ComponentProps<typeof ChartContainer>["config"]
+}
 
 export default function RevenueChart() {
   const totalRevenue = React.useMemo(() => {
