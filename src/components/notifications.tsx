@@ -35,7 +35,7 @@ const mockNotifications = [
 
 export default function Notifications() {
     return (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg h-full">
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <Bell className="h-6 w-6 text-primary" />

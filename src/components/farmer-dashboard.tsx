@@ -5,11 +5,18 @@ import { useState } from "react";
 import type { z } from "zod";
 import { PredictionResult, getIndiYieldPrediction, MarketDataResult, getMarketData } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
+import { PlusCircle, ChevronsDown, ChevronsUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
 
 import PredictionForm, { formSchema } from "./prediction-form";
 import ResultsDisplay from "./results-display";
 import ResultsSkeleton from "./results-skeleton";
-import InitialState from "./initial-state";
 import MarketPrices from "./market-prices";
 import CropStatistics from "./crop-statistics";
 import { indianStates } from "@/lib/data";
@@ -24,6 +31,7 @@ export default function FarmerDashboard() {
   const { toast } = useToast();
   const [selectedRegion, setSelectedRegion] = useState("odisha");
   const [selectedCrop, setSelectedCrop] = useState("rice");
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
 
   const handleFormSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -31,6 +39,7 @@ export default function FarmerDashboard() {
     setResult(null);
     setMarketData(null);
     setIsMarketLoading(true);
+    setIsFormOpen(false); // Close form on submission
 
     try {
       setSelectedRegion(data.region);
@@ -58,16 +67,38 @@ export default function FarmerDashboard() {
   const currentRegion = indianStates.find(s => s.value === selectedRegion);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-            <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />
+    <div className="space-y-8">
+        <Collapsible
+            open={isFormOpen}
+            onOpenChange={setIsFormOpen}
+            className="w-full"
+        >
+            <div className="flex items-center justify-between space-x-4">
+                <h2 className="text-3xl font-bold font-headline text-foreground">
+                    Farmer Dashboard
+                </h2>
+                <CollapsibleTrigger asChild>
+                   <Button variant="ghost" size="sm" className="w-9 p-0">
+                     <h4 className="flex items-center gap-2 font-semibold">
+                       {isFormOpen ? 'Close' : 'Get New Prediction'}
+                       {isFormOpen ? <ChevronsUp className="h-4 w-4" /> : <ChevronsDown className="h-4 w-4" />}
+                     </h4>
+                     <span className="sr-only">Toggle Prediction Form</span>
+                   </Button>
+                </CollapsibleTrigger>
+            </div>
             
-            <div className="animate-in fade-in duration-500">
-                {isLoading && <ResultsSkeleton />}
-                {!isLoading && result && (
-                <>
-                    <ResultsDisplay result={result} />
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <CollapsibleContent className="space-y-8 pt-8">
+                <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />
+            </CollapsibleContent>
+        </Collapsible>
+        
+        <div className="animate-in fade-in duration-500 space-y-8">
+            {isLoading && <ResultsSkeleton />}
+            {result && (
+            <>
+                <ResultsDisplay result={result} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-3">
                         <MarketPrices 
                             crop={selectedCrop} 
@@ -76,20 +107,22 @@ export default function FarmerDashboard() {
                             isLoading={isMarketLoading}
                         />
                     </div>
-                    </div>
-                    <div className="mt-8">
-                        <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} />
-                    </div>
-                </>
-                )}
-                {!isLoading && !result && <InitialState />}
+                </div>
+            </>
+            )}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+                <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} showInitialState={!result}/>
+            </div>
+            <div className="lg:col-span-1">
+                <Notifications />
             </div>
         </div>
-        <div className="lg:col-span-1 space-y-8">
-            <Notifications />
+        <div className="lg:col-span-3">
             <PastPredictions />
         </div>
     </div>
-
   );
 }

@@ -39,7 +39,7 @@ const mockPastPredictions = [
 
 export default function PastPredictions() {
     return (
-        <Card className="shadow-lg">
+        <Card className="shadow-lg h-full">
             <CardHeader>
                 <div className="flex items-center gap-3">
                     <History className="h-6 w-6 text-primary" />
