@@ -17,39 +17,24 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { crops } from "@/lib/data"
 
 const chartData = [
-  { crop: "Rice", revenue: 275000, fill: "var(--color-rice)" },
-  { crop: "Wheat", revenue: 200000, fill: "var(--color-wheat)" },
-  { crop: "Cotton", revenue: 125000, fill: "var(--color-cotton)" },
-  { crop: "Sugarcane", revenue: 150000, fill: "var(--color-sugarcane)" },
-  { crop: "Maize", revenue: 85000, fill: "var(--color-maize)" },
+  { crop: "rice", revenue: 275000, fill: "var(--color-rice)" },
+  { crop: "wheat", revenue: 200000, fill: "var(--color-wheat)" },
+  { crop: "cotton", revenue: 187000, fill: "var(--color-cotton)" },
+  { crop: "sugarcane", revenue: 150000, fill: "var(--color-sugarcane)" },
+  { crop: "maize", revenue: 120000, fill: "var(--color-maize)" },
 ]
 
 const chartConfig = {
   revenue: {
     label: "Revenue",
   },
-  rice: {
-    label: "Rice",
-    color: "hsl(var(--chart-1))",
-  },
-  wheat: {
-    label: "Wheat",
-    color: "hsl(var(--chart-2))",
-  },
-  cotton: {
-    label: "Cotton",
-    color: "hsl(var(--chart-3))",
-  },
-  sugarcane: {
-    label: "Sugarcane",
-    color: "hsl(var(--chart-4))",
-  },
-  maize: {
-    label: "Maize",
-    color: "hsl(var(--chart-5))",
-  },
+  ...crops.reduce((acc, crop) => {
+    acc[crop.value] = { label: crop.label, color: `hsl(var(--chart-${Object.keys(acc).length + 1}))` };
+    return acc;
+  }, {} as any)
 }
 
 export default function RevenueChart() {
@@ -66,7 +51,7 @@ export default function RevenueChart() {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square max-h-[300px]"
         >
           <PieChart>
             <ChartTooltip
@@ -77,19 +62,8 @@ export default function RevenueChart() {
               data={chartData}
               dataKey="revenue"
               nameKey="crop"
-              innerRadius={60}
+              innerRadius={80}
               strokeWidth={5}
-              activeIndex={0}
-              activeShape={({ outerRadius = 0, ...props }) => (
-                <g>
-                  <Sector {...props} outerRadius={outerRadius + 10} />
-                  <Sector
-                    {...props}
-                    outerRadius={outerRadius}
-                    innerRadius={outerRadius - 5}
-                  />
-                </g>
-              )}
             >
               <Label
                 content={({ viewBox }) => {
@@ -129,7 +103,7 @@ export default function RevenueChart() {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4 text-green-500" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Compared to the previous 12-month period.
+          Showing data for the last 12 months.
         </div>
       </CardFooter>
     </Card>
