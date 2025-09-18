@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Leaf } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PastPredictions from "./past-predictions";
 import RevenueChart from "./revenue-chart";
@@ -83,20 +84,25 @@ export default function FarmerDashboard() {
               </div>
 
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                <Card className="lg:col-span-2 bg-primary/5 border-primary/20 flex flex-col justify-between">
-                  <CardHeader>
-                    <CardTitle className="text-2xl">Ready for your next cycle?</CardTitle>
-                    <CardDescription>
-                      Use our powerful AI to get detailed yield predictions and actionable
-                      recommendations for your crops.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button size="lg" onClick={() => setViewState('FORM')}>
-                        <span>Start a New Prediction</span>
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                    </Button>
-                  </CardContent>
+                <Card className="lg:col-span-2 bg-primary/5 border-primary/20">
+                  <div className="flex h-full">
+                    <div className="flex flex-col justify-between p-6">
+                        <div>
+                          <h2 className="text-2xl font-bold">Ready for your next cycle?</h2>
+                          <p className="text-muted-foreground mt-2 max-w-md">
+                            Use our powerful AI to get detailed yield predictions and actionable
+                            recommendations for your crops.
+                          </p>
+                        </div>
+                        <Button size="lg" onClick={() => setViewState('FORM')} className="mt-4 w-fit">
+                            <span>Start a New Prediction</span>
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                    </div>
+                    <div className="hidden md:flex flex-1 items-center justify-center bg-primary/10 rounded-r-xl">
+                        <Leaf className="h-24 w-24 text-primary/40" />
+                    </div>
+                  </div>
                 </Card>
                 <Notifications />
               </div>
