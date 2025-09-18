@@ -13,9 +13,9 @@ const pastPredictions = [
 ];
 
 const statusColors: { [key: string]: string } = {
-    Harvested: "bg-green-100 text-green-800 border-green-200",
-    Growing: "bg-blue-100 text-blue-800 border-blue-200",
-    Active: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    Harvested: "bg-green-500/10 text-green-400 border-green-500/20",
+    Growing: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    Active: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
 }
 
 export default function PastPredictions() {
