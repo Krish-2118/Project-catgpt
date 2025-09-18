@@ -95,7 +95,7 @@ export default function LandDetailsForm() {
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select irrigation source" />
-                  </SelectTrigger>_
+                  </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
