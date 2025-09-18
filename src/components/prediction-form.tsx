@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,14 +15,15 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { crops, indianStates } from "@/lib/data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { crops } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCropSuggestions, SuggestionResult } from "@/app/actions";
+import { getCropSuggestions, SuggestionResult, getIndiYieldPrediction, PredictionResult } from "@/app/actions";
 import { Skeleton } from "./ui/skeleton";
 import { SuggestedCrop } from "@/ai/flows/suggest-crop";
 import LandDetailsForm, { landDetailsSchema } from "./land-details-form";
+import { useToast } from "@/hooks/use-toast";
 
 
 export const formSchema = z.object({
@@ -34,7 +35,6 @@ export const formSchema = z.object({
 
 type PredictionFormProps = {
   onSubmit: (data: z.infer<typeof formSchema>) => void;
-  isLoadingExternally: boolean;
 };
 
 const steps = [
@@ -60,13 +60,12 @@ const seasons = [
 ]
 
 
-export default function PredictionForm({
-  onSubmit,
-  isLoadingExternally,
-}: PredictionFormProps) {
+export default function PredictionForm({ onSubmit }: PredictionFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<SuggestionResult | null>(null);
+  const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,6 +87,29 @@ export default function PredictionForm({
   const landDetailsToString = (details: z.infer<typeof landDetailsSchema>): string => {
     return `The farm is located in ${details.district} district, Odisha. The soil is primarily ${details.soilType}, with irrigation from ${details.irrigationSource}. The land topography is ${details.topography}.`;
   }
+  
+  const handleFinalSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    try {
+        await getIndiYieldPrediction(data);
+        toast({
+            title: "Prediction Complete!",
+            description: "Redirecting you to the dashboard to see the results.",
+        });
+        // In a real app, you'd redirect to a results page, e.g., router.push(`/results/${predictionId}`);
+        router.push('/');
+    } catch (error) {
+         toast({
+            variant: "destructive",
+            title: "An error occurred",
+            description:
+            error instanceof Error ? error.message : "Please try again later.",
+        });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
 
   const nextStep = async () => {
     let isValid = false;
@@ -101,6 +123,11 @@ export default function PredictionForm({
           setSuggestions(result);
         } catch (e) {
             console.error(e);
+            toast({
+                variant: "destructive",
+                title: "Could not get suggestions",
+                description: "There was an issue with the AI. Please proceed by selecting a crop manually.",
+            });
         } finally {
             setIsLoading(false);
         }
@@ -121,12 +148,11 @@ export default function PredictionForm({
   };
   
   const selectedCrop = crops.find(c => c.value === getValues('crop'));
-  const isFormLoading = isLoading || isLoadingExternally;
 
   return (
     <div className="w-full max-w-4xl mx-auto">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(handleFinalSubmit)} className="space-y-8">
             <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
@@ -139,8 +165,8 @@ export default function PredictionForm({
                 className="space-y-4"
                 >
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold font-headline">Welcome to IndiYield</h2>
-                    <p className="text-muted-foreground mt-2">Let's start by getting some details about your farm.</p>
+                    <h2 className="text-3xl font-bold font-headline">Let's Get Started</h2>
+                    <p className="text-muted-foreground mt-2">Begin by providing details about your farmland.</p>
                 </div>
                 <LandDetailsForm />
               </motion.div>
@@ -321,27 +347,27 @@ export default function PredictionForm({
 
             <div className="flex justify-between pt-8">
               {currentStep > 0 ? (
-                <Button type="button" variant="outline" onClick={prevStep} disabled={isFormLoading}>
+                <Button type="button" variant="outline" onClick={prevStep} disabled={isLoading}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
               ) : <div />}
 
               {currentStep < steps.length - 1 && (
-                <Button type="button" onClick={nextStep} disabled={isFormLoading} size="lg">
+                <Button type="button" onClick={nextStep} disabled={isLoading} size="lg">
                  { isLoading ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2 h-4 w-4" /> </>}
                 </Button>
               )}
 
               {currentStep === steps.length - 1 && (
-                <Button type="submit" disabled={isFormLoading} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
-                  {isLoadingExternally ? (
+                <Button type="submit" disabled={isLoading} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold">
+                  {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating Prediction...
                     </>
                   ) : (
-                    "Get Prediction"
+                    "Get Prediction & Recommendations"
                   )}
                 </Button>
               )}

@@ -10,17 +10,17 @@ const mockData = [
   { name: '2021', yield: 2.6, allCrops: 2.4 },
   { name: '2022', yield: 3.1, allCrops: 2.8 },
   { name: '2023', yield: 3.0, allCrops: 2.7 },
-  { name: '2024 (P)', yield: 3.2, allCrops: 2.9 },
 ];
 
 export default function CropStatistics({ crop, region }: { crop: string, region: string }) {
+    const isAllCrops = crop === 'all';
     const regionLabel = region.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    const cropLabel = crop.charAt(0).toUpperCase() + crop.slice(1);
+    const cropLabel = isAllCrops ? 'All Crops' : crop.charAt(0).toUpperCase() + crop.slice(1);
     
-    const title = `Historical Yield for ${cropLabel}`;
-    const description = `Yield data in ${regionLabel} over the last 5 years.`;
-    const dataKey = "yield";
-    const barName = "Yield (tons/hectare)";
+    const title = isAllCrops ? `Regional Yield Averages` : `Historical Yield for ${cropLabel}`;
+    const description = isAllCrops ? `Average yield for all major crops in ${regionLabel}.` : `Yield data in ${regionLabel} over the last 5 years.`;
+    const dataKey = isAllCrops ? "allCrops" : "yield";
+    const barName = isAllCrops ? "Avg. Yield (t/ha)" : "Yield (tons/hectare)";
 
 
     return (

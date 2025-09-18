@@ -1,106 +1,57 @@
-
 "use client";
 
-import { useState } from "react";
-import type { z } from "zod";
-import { PredictionResult, getIndiYieldPrediction, MarketDataResult, getMarketData } from "@/app/actions";
-import { useToast } from "@/hooks/use-toast";
-import { ChevronsDown, ChevronsUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-
-
-import PredictionForm, { formSchema } from "./prediction-form";
-import ResultsDisplay from "./results-display";
-import ResultsSkeleton from "./results-skeleton";
-import MarketPrices from "./market-prices";
-import CropStatistics from "./crop-statistics";
-import { indianStates } from "@/lib/data";
-import PastPredictions from "./past-predictions";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Notifications from "./notifications";
-import InitialState from "./initial-state";
+import PastPredictions from "./past-predictions";
+import CropStatistics from "./crop-statistics";
+import RevenueChart from "./revenue-chart";
 
 export default function FarmerDashboard() {
-  const [result, setResult] = useState<PredictionResult | null>(null);
-  const [marketData, setMarketData] = useState<MarketDataResult | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMarketLoading, setIsMarketLoading] = useState(false);
-  const { toast } = useToast();
-  const [selectedRegion, setSelectedRegion] = useState("odisha");
-  const [selectedCrop, setSelectedCrop] = useState("rice");
-  const [isFormOpen, setIsFormOpen] = useState(true);
-
-
-  const handleFormSubmit = async (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-    setResult(null);
-    setMarketData(null);
-    setIsMarketLoading(true);
-    setIsFormOpen(false); // Close form on submission
-
-    try {
-      setSelectedRegion(data.region);
-      setSelectedCrop(data.crop);
-      const predictionResult = await getIndiYieldPrediction(data);
-      setResult(predictionResult);
-
-      const currentRegionLabel = indianStates.find(s => s.value === data.region)?.label || "Odisha";
-      const marketResult = await getMarketData(data.crop, currentRegionLabel);
-      setMarketData(marketResult);
-
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "An error occurred",
-        description:
-          error instanceof Error ? error.message : "Please try again later.",
-      });
-    } finally {
-      setIsLoading(false);
-      setIsMarketLoading(false);
-    }
-  };
-  
-  const currentRegion = indianStates.find(s => s.value === selectedRegion);
-
-  if (!result && !isLoading) {
-    return <PredictionForm onSubmit={handleFormSubmit} isLoadingExternally={isLoading} />;
-  }
-
   return (
     <div className="space-y-8">
-        
-        <div className="animate-in fade-in duration-500 space-y-8">
-            {isLoading && <ResultsSkeleton />}
-            {result && (
-            <>
-                <ResultsDisplay result={result} />
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2">
-                        <MarketPrices 
-                            crop={selectedCrop} 
-                            region={currentRegion?.label || "Odisha"}
-                            marketData={marketData}
-                            isLoading={isMarketLoading}
-                        />
-                    </div>
-                     <div className="lg:col-span-1">
-                        <CropStatistics crop={selectedCrop} region={currentRegion?.label || "Odisha"} />
-                    </div>
-                </div>
-            </>
-            )}
+      <div className="text-center">
+        <h1 className="text-3xl md:text-4xl font-bold font-headline text-foreground">
+          Welcome Back, Farmer!
+        </h1>
+        <p className="mt-2 text-lg text-muted-foreground">
+          Here's a snapshot of your farm's performance and recent activity.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main column */}
+        <div className="lg:col-span-2 space-y-8">
+          <Link href="/predict" className="block group">
+            <Card className="bg-primary/5 border-primary/20 hover:bg-primary/10 hover:shadow-lg transition-all">
+              <CardHeader>
+                <CardTitle className="text-2xl text-primary flex items-center justify-between">
+                  <span>Start a New Prediction</span>
+                  <ArrowRight className="h-6 w-6 transform group-hover:translate-x-1 transition-transform" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Use our AI to get detailed yield predictions and actionable
+                  recommendations for your next crop cycle.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <RevenueChart />
         </div>
 
-         {result && 
-          <div className="flex justify-center">
-            <Button onClick={() => setResult(null)}>Make another prediction</Button>
-          </div>
-        }
+        {/* Right sidebar */}
+        <div className="lg:col-span-1 space-y-8">
+          <Notifications />
+          <PastPredictions />
+        </div>
+      </div>
+      <div className="pt-8">
+        <CropStatistics crop="all" region="Odisha" />
+      </div>
     </div>
   );
 }
