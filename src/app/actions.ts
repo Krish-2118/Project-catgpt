@@ -5,19 +5,8 @@ import { predictCropYields } from "@/ai/flows/predict-crop-yields";
 import { provideActionableRecommendations } from "@/ai/flows/provide-actionable-recommendations";
 import { getMarketIntelligence, MarketIntelligenceOutput } from "@/ai/flows/get-market-intelligence";
 import { suggestCrop, SuggestCropOutput } from "@/ai/flows/suggest-crop";
+import type { formSchema } from "@/components/prediction-form";
 
-export const formSchema = z.object({
-  landDescription: z.string().min(20, "Please provide a more detailed description of your land (at least 20 characters)."),
-  crop: z.string().min(1, "Please select a crop."),
-  region: z.string().min(1, "Please select a region."),
-  dateRange: z.object(
-    {
-      from: z.date({ required_error: "Start date is required." }),
-      to: z.date({ required_error: "End date is required." }),
-    },
-    { required_error: "Please select a date range." }
-  ),
-});
 
 export type PredictionResult = {
   predictedYield: string;
