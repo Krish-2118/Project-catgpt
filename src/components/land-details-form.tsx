@@ -30,20 +30,14 @@ export const landDetailsSchema = z.object({
 
 export type LandDetailsValues = z.infer<typeof landDetailsSchema>;
 
-const odishaDistricts = [
-    "Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh",
-    "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi",
-    "Kandhamal", "Kendrapara", "Keonjhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj",
-    "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"
-];
-const soilTypes = ["Alluvial", "Red", "Laterite", "Black", "Sandy Loam", "Clayey"];
-const irrigationSources = ["Canal", "Borewell/Tubewell", "River Lift", "Pond", "Rain-fed"];
-const topographies = ["Plains", "Hilly/Undulating", "Coastal/Deltaic", "Plateau"];
-
-
 export default function LandDetailsForm({ language, locales }: { language: Language, locales: any }) {
   const { control } = useFormContext();
   const t = locales[language].form.land;
+
+  const odishaDistricts = t.districts;
+  const soilTypes = t.soilTypes;
+  const irrigationSources = t.irrigationSources;
+  const topographies = t.topographies;
 
   return (
     <Card className="max-w-2xl mx-auto border-2 border-primary/10 bg-card/50">
@@ -66,7 +60,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                        {odishaDistricts.map(d => <SelectItem key={d} value={d.toLowerCase()}>{d}</SelectItem>)}
+                        {odishaDistricts.map((d: { value: string, label: string}) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -86,7 +80,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                        {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
+                        {soilTypes.map((s: { value: string, label: string}) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -106,7 +100,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
+                            {irrigationSources.map((i: { value: string, label: string}) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -119,14 +113,15 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>{t.topography}</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValuecha
+                    nge={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select topography" />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                        {topographies.map(t => <SelectItem key={t} value={t.toLowerCase()}>{t}</SelectItem>)}
+                        {topographies.map((t: { value: string, label: string}) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />

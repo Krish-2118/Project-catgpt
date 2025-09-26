@@ -37,6 +37,28 @@ export default function Home() {
             soilType: 'Predominant Soil Type',
             irrigationSource: 'Primary Irrigation Source',
             topography: 'Land Topography',
+            districts: [
+                { value: "angul", label: "Angul" }, { value: "balangir", label: "Balangir" }, { value: "balasore", label: "Balasore" }, { value: "bargarh", label: "Bargarh" }, 
+                { value: "bhadrak", label: "Bhadrak" }, { value: "boudh", label: "Boudh" }, { value: "cuttack", label: "Cuttack" }, { value: "deogarh", label: "Deogarh" },
+                { value: "dhenkanal", label: "Dhenkanal" }, { value: "gajapati", label: "Gajapati" }, { value: "ganjam", label: "Ganjam" }, { value: "jagatsinghpur", label: "Jagatsinghpur" }, 
+                { value: "jajpur", label: "Jajpur" }, { value: "jharsuguda", label: "Jharsuguda" }, { value: "kalahandi", label: "Kalahandi" },
+                { value: "kandhamal", label: "Kandhamal" }, { value: "kendrapara", label: "Kendrapara" }, { value: "keonjhar", label: "Keonjhar" }, { value: "khordha", label: "Khordha" }, 
+                { value: "koraput", label: "Koraput" }, { value: "malkangiri", label: "Malkangiri" }, { value: "mayurbhanj", label: "Mayurbhanj" },
+                { value: "nabarangpur", label: "Nabarangpur" }, { value: "nayagarh", label: "Nayagarh" }, { value: "nuapada", label: "Nuapada" }, { value: "puri", label: "Puri" }, 
+                { value: "rayagada", label: "Rayagada" }, { value: "sambalpur", label: "Sambalpur" }, { value: "subarnapur", label: "Subarnapur" }, { value: "sundargarh", label: "Sundargarh" }
+            ],
+            soilTypes: [
+                { value: "alluvial", label: "Alluvial" }, { value: "red", label: "Red" }, { value: "laterite", label: "Laterite" }, 
+                { value: "black", label: "Black" }, { value: "sandy_loam", label: "Sandy Loam" }, { value: "clayey", label: "Clayey" }
+            ],
+            irrigationSources: [
+                { value: "canal", label: "Canal" }, { value: "borewell/tubewell", label: "Borewell/Tubewell" }, { value: "river_lift", label: "River Lift" }, 
+                { value: "pond", label: "Pond" }, { value: "rain-fed", label: "Rain-fed" }
+            ],
+            topographies: [
+                { value: "plains", label: "Plains" }, { value: "hilly/undulating", label: "Hilly/Undulating" }, { value: "coastal/deltaic", label: "Coastal/Deltaic" }, 
+                { value: "plateau", label: "Plateau" }
+            ],
         },
         crop: {
             title: 'Select Your Crop',
@@ -129,6 +151,28 @@ export default function Home() {
             soilType: 'ପ୍ରମୁଖ ମୃତ୍ତିକା ପ୍ରକାର',
             irrigationSource: 'ପ୍ରାଥମିକ ଜଳସେଚନ ଉତ୍ସ',
             topography: 'ଜମି ଭୂപ്രകൃତି',
+            districts: [
+                { value: "angul", label: "ଅନୁଗୁଳ" }, { value: "balangir", label: "ବଲାଙ୍ଗୀର" }, { value: "balasore", label: "ବାଲେଶ୍ୱର" }, { value: "bargarh", label: "ବରଗଡ" },
+                { value: "bhadrak", label: "ଭଦ୍ରକ" }, { value: "boudh", label: "ବୌଦ୍ଧ" }, { value: "cuttack", label: "କଟକ" }, { value: "deogarh", label: "ଦେବଗଡ" },
+                { value: "dhenkanal", label: "ଢେଙ୍କାନାଳ" }, { value: "gajapati", label: "ଗଜପତି" }, { value: "ganjam", label: "ଗଞ୍ଜାମ" }, { value: "jagatsinghpur", label: "ଜଗତସିଂହପୁର" },
+                { value: "jajpur", label: "ଯାଜପୁର" }, { value: "jharsuguda", label: "ଝାରସୁଗୁଡା" }, { value: "kalahandi", label: "କଳାହାଣ୍ଡି" },
+                { value: "kandhamal", label: "କନ୍ଧମାଳ" }, { value: "kendrapara", label: "କେନ୍ଦ୍ରାପଡା" }, { value: "keonjhar", label: "କେନ୍ଦୁଝର" }, { value: "khordha", label: "ଖୋର୍ଦ୍ଧା" },
+                { value: "koraput", label: "କୋରାପୁଟ" }, { value: "malkangiri", label: "ମାଲକାନଗିରି" }, { value: "mayurbhanj", label: "ମୟୂରଭଞ୍ଜ" },
+                { value: "nabarangpur", label: "ନବରଙ୍ଗପୁର" }, { value: "nayagarh", label: "ନୟାଗଡ" }, { value: "nuapada", label: "ନୂଆପଡା" }, { value: "puri", label: "ପୁରୀ" },
+                { value: "rayagada", label: "ରାୟଗଡା" }, { value: "sambalpur", label: "ସମ୍ବଲପୁର" }, { value: "subarnapur", label: "ସୁବର୍ଣ୍ଣପୁର" }, { value: "sundargarh", label: "ସୁନ୍ଦରଗଡ" }
+            ],
+            soilTypes: [
+                { value: "alluvial", label: "ପଟୁମାଟି" }, { value: "red", label: "ଲାଲମାଟି" }, { value: "laterite", label: "ମାଙ୍କଡା ମାଟି" },
+                { value: "black", label: "କଳାମାଟି" }, { value: "sandy_loam", label: "ବାଲିଆ ଦୋରସା" }, { value: "clayey", label: "ମଟାଳ" }
+            ],
+            irrigationSources: [
+                { value: "canal", label: "କେନାଲ" }, { value: "borewell/tubewell", label: "ବୋରୱେଲ/ଟ୍ୟୁବୱେଲ" }, { value: "river_lift", label: "ନଦୀ ଉଠା" },
+                { value: "pond", label: "ପୋଖରୀ" }, { value: "rain-fed", label: "ବର୍ଷା-ଆଧାରିତ" }
+            ],
+            topographies: [
+                { value: "plains", label: "ସମତଳ" }, { value: "hilly/undulating", label: "ପାହାଡ଼ିଆ/ଉଚ୍ଚା-ନୀଚା" }, { value: "coastal/deltaic", label: "ଉପକୂଳୀୟ/ତ୍ରିକୋଣଭୂମି" },
+                { value: "plateau", label: "ମାଳଭୂମି" }
+            ],
         },
         crop: {
             title: 'ଆପଣଙ୍କ ଫସଲ ଚୟନ କରନ୍ତୁ',
