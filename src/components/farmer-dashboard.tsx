@@ -13,10 +13,11 @@ import MarketPrices from "./market-prices";
 import CropStatistics from "./crop-statistics";
 import { Button } from "./ui/button";
 import Notifications from "./notifications";
+import type { Language } from "@/app/page";
 
 type ViewState = 'DASHBOARD' | 'FORM' | 'RESULT';
 
-export default function FarmerDashboard() {
+export default function FarmerDashboard({ language, locales }: { language: Language, locales: any }) {
   const [viewState, setViewState] = useState<ViewState>('DASHBOARD');
   const [predictionResult, setPredictionResult] = useState<PredictionResult | null>(null);
   const [marketData, setMarketData] = useState<MarketDataResult | null>(null);
