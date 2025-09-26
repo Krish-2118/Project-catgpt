@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -40,14 +41,16 @@ export default function Home() {
 
   return (
     <main className="min-h-screen container mx-auto py-8">
-      <header className="mb-12 flex flex-col items-center md:relative md:text-center">
-        <div className="w-full flex justify-between items-center md:justify-center">
-            <h1 className="text-4xl font-bold tracking-tight text-primary text-center">{t.title}</h1>
+      <header className="mb-12 flex flex-col items-center text-center">
+        <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center">
+            <div className="flex-1 md:text-center">
+                <h1 className="text-4xl font-bold tracking-tight text-primary">{t.title}</h1>
+            </div>
+            <div className="mt-4 md:mt-0">
+                <Button variant="secondary" onClick={toggleLanguage}>{t.toggleButton}</Button>
+            </div>
         </div>
         <p className="text-muted-foreground mt-2 text-center">{t.tagline}</p>
-        <div className="mt-4 md:mt-0 md:absolute md:top-0 md:right-0">
-          <Button variant="ghost" onClick={toggleLanguage}>{t.toggleButton}</Button>
-        </div>
       </header>
       <FarmerDashboard language={language} locales={locales} />
     </main>

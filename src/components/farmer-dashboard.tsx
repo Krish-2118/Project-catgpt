@@ -73,7 +73,7 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
       default:
         return (
           <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+             <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
                 <motion.div 
                   className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-xl"
                   initial={{ opacity: 0, y: 20 }}
