@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import type { Language } from "@/app/page";
 
 
 export const landDetailsSchema = z.object({
@@ -40,14 +41,15 @@ const irrigationSources = ["Canal", "Borewell/Tubewell", "River Lift", "Pond", "
 const topographies = ["Plains", "Hilly/Undulating", "Coastal/Deltaic", "Plateau"];
 
 
-export default function LandDetailsForm() {
+export default function LandDetailsForm({ language, locales }: { language: Language, locales: any }) {
   const { control } = useFormContext();
+  const t = locales[language].form.land;
 
   return (
     <Card className="max-w-2xl mx-auto border-2 border-primary/10 bg-card/50">
         <CardHeader>
-            <CardTitle>Describe Your Land</CardTitle>
-            <CardDescription>Provide details about your farmland for a more accurate prediction.</CardDescription>
+            <CardTitle>{t.formTitle}</CardTitle>
+            <CardDescription>{t.formDescription}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -56,7 +58,7 @@ export default function LandDetailsForm() {
                 name="landDetails.district"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>District</FormLabel>
+                    <FormLabel>{t.district}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
@@ -76,12 +78,12 @@ export default function LandDetailsForm() {
                 name="landDetails.soilType"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Predominant Soil Type</FormLabel>
+                    <FormLabel>{t.soilType}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select soil type" />
-                        </SelectTrigger>
+                        </Trigger>
                         </FormControl>
                         <SelectContent>
                         {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
@@ -96,7 +98,7 @@ export default function LandDetailsForm() {
                 name="landDetails.irrigationSource"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Primary Irrigation Source</FormLabel>
+                    <FormLabel>{t.irrigationSource}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
@@ -116,7 +118,7 @@ export default function LandDetailsForm() {
                 name="landDetails.topography"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Land Topography</FormLabel>
+                    <FormLabel>{t.topography}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>

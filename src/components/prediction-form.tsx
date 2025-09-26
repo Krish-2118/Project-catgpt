@@ -189,7 +189,7 @@ export default function PredictionForm({ onPredictionComplete, onBack, language,
                     <h2 className="text-3xl font-bold">{t.land.title}</h2>
                     <p className="text-muted-foreground mt-2">{t.land.description}</p>
                 </div>
-                <LandDetailsForm />
+                <LandDetailsForm language={language} locales={locales}/>
               </motion.div>
             )}
 

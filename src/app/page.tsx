@@ -31,6 +31,12 @@ export default function Home() {
         land: {
             title: "Let's Get Started",
             description: 'Begin by providing details about your farmland in Odisha.',
+            formTitle: 'Describe Your Land',
+            formDescription: 'Provide details about your farmland for a more accurate prediction.',
+            district: 'District',
+            soilType: 'Predominant Soil Type',
+            irrigationSource: 'Primary Irrigation Source',
+            topography: 'Land Topography',
         },
         crop: {
             title: 'Select Your Crop',
@@ -117,6 +123,12 @@ export default function Home() {
         land: {
             title: 'ଚାଲନ୍ତୁ ଆରମ୍ଭ କରିବା',
             description: 'ଓଡ଼ିଶାରେ ଆପଣଙ୍କର ଚାଷ ଜମି ବିଷୟରେ ବିବରଣୀ ପ୍ରଦାନ କରି ଆରମ୍ଭ କରନ୍ତୁ।',
+            formTitle: 'ଆପଣଙ୍କ ଜମି ବର୍ଣ୍ଣନା କରନ୍ତୁ',
+            formDescription: 'ଏକ ଅଧିକ ସଠିକ ପୂର୍ବାନୁମାନ ପାଇଁ ଆପଣଙ୍କ ଚାଷ ଜମି ବିଷୟରେ ବିବରଣୀ ପ୍ରଦାନ କରନ୍ତୁ।',
+            district: 'ଜିଲ୍ଲା',
+            soilType: 'ପ୍ରମୁଖ ମୃତ୍ତିକା ପ୍ରକାର',
+            irrigationSource: 'ପ୍ରାଥମିକ ଜଳସେଚନ ଉତ୍ସ',
+            topography: 'ଜମି ଭୂപ്രകൃତି',
         },
         crop: {
             title: 'ଆପଣଙ୍କ ଫସଲ ଚୟନ କରନ୍ତୁ',
@@ -176,7 +188,7 @@ export default function Home() {
           cropStatistics: {
               regionalTitle: "ଆଞ୍ଚଳିକ ଅମଳ ହାରାହାରି",
               historicalTitle: "ପାଇଁ ଐତିହାସିକ ଅମଳ",
-              regionalDescription: "ପ୍ରମୁଖ ଫସଲ ପାଇଁ ହାରାହାରି ଅମଳ",
+              regionalDescription: "ରେ ପ୍ରମୁଖ ଫସଲ ପାଇଁ ହାରାହାରି ଅମଳ",
               historicalDescription: "ରେ ଅମଳ ତଥ୍ୟ",
               yieldLabel: "ଅମଳ (ଟନ୍/ହେ)",
               avgYieldLabel: "ହାରାହାରି ଅମଳ (ଟନ୍/ହେ)",
@@ -196,8 +208,8 @@ export default function Home() {
     <main className="min-h-screen container mx-auto py-8">
       <header className="mb-12">
         <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center px-4">
-            <div className="flex-1 text-center order-2 md:order-1">
-                <h1 className="text-4xl font-bold tracking-tight text-primary">{t.title}</h1>
+            <div className="flex-1 text-center md:text-left order-2 md:order-1">
+                <h1 className="text-4xl font-bold tracking-tight text-primary text-center">{t.title}</h1>
                 <p className="text-muted-foreground mt-2 text-center">{t.tagline}</p>
             </div>
             <div className="order-1 md:order-2 self-end md:self-center mb-4 md:mb-0">
