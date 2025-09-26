@@ -71,7 +71,12 @@ export default function FarmerDashboard() {
         return (
           <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                <div className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-xl">
+                <motion.div 
+                  className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-xl"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
                   <div className="flex h-full">
                     <div className="flex flex-col justify-between p-6">
                         <div>
@@ -90,13 +95,31 @@ export default function FarmerDashboard() {
                         <Leaf className="h-24 w-24 text-primary/50" />
                     </div>
                   </div>
-                </div>
-                <Notifications />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Notifications />
+                </motion.div>
               </div>
 
               <div className="grid gap-8 md:grid-cols-2">
-                <LandStatus />
-                <PastPredictions />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  <LandStatus />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <PastPredictions />
+                </motion.div>
               </div>
           </motion.div>
         );

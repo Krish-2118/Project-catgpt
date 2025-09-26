@@ -4,7 +4,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout, Leaf, Mountain, Waves, Bot } from "lucide-react";
+import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout, Leaf, Mountain, Waves, Bot, Wind, Cherry, Carrot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,12 +49,12 @@ const cropIcons: { [key: string]: React.ReactNode } = {
     wheat: <Wheat className="h-8 w-8 text-yellow-600"/>,
     maize: <Sprout className="h-8 w-8 text-green-500"/>,
     sugarcane: <Leaf className="h-8 w-8 text-green-600"/>,
-    cotton: <div className="h-8 w-8 bg-gray-200 rounded-full"/>,
+    cotton: <Wind className="h-8 w-8 text-gray-200"/>,
     soybean: <Sprout className="h-8 w-8 text-yellow-500"/>,
-    potato: <Sprout className="h-8 w-8 text-amber-700"/>,
+    potato: <Carrot className="h-8 w-8 text-amber-700"/>,
     mustard: <Sprout className="h-8 w-8 text-yellow-400"/>,
     jute: <Leaf className="h-8 w-8 text-lime-600"/>,
-    tomato: <div className="h-8 w-8 bg-red-500 rounded-full"/>,
+    tomato: <Cherry className="h-8 w-8 text-red-500"/>,
     default: <Wheat className="h-8 w-8 text-yellow-600"/>
 }
 
