@@ -56,7 +56,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select a district" />
+                            <SelectValue placeholder={t.placeholderDistrict} />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -76,7 +76,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select soil type" />
+                            <SelectValue placeholder={t.placeholderSoilType} />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -96,7 +96,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                     <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select irrigation source" />
+                            <SelectValue placeholder={t.placeholderIrrigation} />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -113,11 +113,10 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>{t.topography}</FormLabel>
-                    <Select onValuecha
-                    nge={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select topography" />
+                            <SelectValue placeholder={t.placeholderTopography} />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -133,3 +132,5 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
     </Card>
   );
 }
+
+    

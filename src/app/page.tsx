@@ -37,6 +37,10 @@ export default function Home() {
             soilType: 'Predominant Soil Type',
             irrigationSource: 'Primary Irrigation Source',
             topography: 'Land Topography',
+            placeholderDistrict: "Select a district",
+            placeholderSoilType: "Select soil type",
+            placeholderIrrigation: "Select irrigation source",
+            placeholderTopography: "Select topography",
             districts: [
                 { value: "angul", label: "Angul" }, { value: "balangir", label: "Balangir" }, { value: "balasore", label: "Balasore" }, { value: "bargarh", label: "Bargarh" }, 
                 { value: "bhadrak", label: "Bhadrak" }, { value: "boudh", label: "Boudh" }, { value: "cuttack", label: "Cuttack" }, { value: "deogarh", label: "Deogarh" },
@@ -151,6 +155,10 @@ export default function Home() {
             soilType: 'ପ୍ରମୁଖ ମୃତ୍ତିକା ପ୍ରକାର',
             irrigationSource: 'ପ୍ରାଥମିକ ଜଳସେଚନ ଉତ୍ସ',
             topography: 'ଜମି ଭୂപ്രകൃତି',
+            placeholderDistrict: "ଏକ ଜିଲ୍ଲା ବାଛନ୍ତୁ",
+            placeholderSoilType: "ମୃତ୍ତିକା ପ୍ରକାର ବାଛନ୍ତୁ",
+            placeholderIrrigation: "ଜଳସେଚନ ଉତ୍ସ ବାଛନ୍ତୁ",
+            placeholderTopography: "ଭୂപ്രകൃତି ବାଛନ୍ତୁ",
             districts: [
                 { value: "angul", label: "ଅନୁଗୁଳ" }, { value: "balangir", label: "ବଲାଙ୍ଗୀର" }, { value: "balasore", label: "ବାଲେଶ୍ୱର" }, { value: "bargarh", label: "ବରଗଡ" },
                 { value: "bhadrak", label: "ଭଦ୍ରକ" }, { value: "boudh", label: "ବୌଦ୍ଧ" }, { value: "cuttack", label: "କଟକ" }, { value: "deogarh", label: "ଦେବଗଡ" },
@@ -265,5 +273,7 @@ export default function Home() {
     </main>
   );
 }
+
+    
 
     
