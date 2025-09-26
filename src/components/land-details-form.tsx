@@ -83,7 +83,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select soil type" />
-                        </Trigger>
+                        </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                         {soilTypes.map(s => <SelectItem key={s} value={s.toLowerCase()}>{s}</SelectItem>)}
