@@ -23,8 +23,7 @@ const PredictCropYieldsInputSchema = z.object({
 export type PredictCropYieldsInput = z.infer<typeof PredictCropYieldsInputSchema>;
 
 const PredictCropYieldsOutputSchema = z.object({
-  predictedYield: z.string().describe('The predicted crop yield for the specified crop and region.'),
-  recommendations: z.string().describe('Actionable recommendations for farmers to optimize their farming practices.'),
+  predictedYield: z.number().describe('The predicted crop yield in tons per hectare as a single number (e.g., 3.5).'),
 });
 export type PredictCropYieldsOutput = z.infer<typeof PredictCropYieldsOutputSchema>;
 
@@ -39,11 +38,11 @@ const prompt = ai.definePrompt({
   tools: [getLongRangeWeatherForecast],
   prompt: `You are an expert agricultural advisor specializing in predicting crop yields in India.
 
-  Based on the following information, predict the crop yield for the specified crop and region, and provide actionable recommendations for farmers to optimize their farming practices. Your prediction should be more specific and nuanced based on the detailed land description and sowing season provided.
+  Based on the following information, predict the crop yield. Your output MUST be just a single number representing the predicted yield in tons per hectare.
 
   To improve your prediction, you can use the available tool to fetch the long-range weather forecast for the upcoming season.
 
-  IMPORTANT: The generated values for yield and recommendations must be varied and not a repetition of previous answers.
+  IMPORTANT: The generated value for yield must be varied and not a repetition of previous answers.
 
   Crop Type: {{{cropType}}}
   Region: {{{region}}}
@@ -53,7 +52,7 @@ const prompt = ai.definePrompt({
   Weather Patterns: {{{weatherPatterns}}}
   Soil Health Metrics: {{{soilHealthMetrics}}}
 
-  Provide the predicted yield and recommendations in a clear and concise manner.
+  Provide ONLY the predicted yield number. For example: 3.2
 `,
 });
 

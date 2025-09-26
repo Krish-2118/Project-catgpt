@@ -24,7 +24,7 @@ export type SuggestionResult = SuggestCropOutput;
 // Helper function to extract a number from a string
 const parseYield = (yieldString: string): number => {
     const match = yieldString.match(/(\d+(\.\d+)?)/);
-    return match ? parseFloat(match[0]) : 0;
+    return match ? parseFloat(match[0]) : 2.8; // Return a default average if parsing fails
 };
 
 export async function getCropSuggestions(landDescription: string, region: string): Promise<SuggestionResult> {
@@ -52,7 +52,7 @@ export async function getIndiYieldPrediction(
     const mockWeatherPatterns = `The region of ${region} typically experiences a monsoon season from June to September, with Rabi and Zaid seasons having distinct weather patterns.`;
     const mockSoilHealthMetrics = `Soil in this part of ${region} is predominantly ${data.landDetails.soilType}.`;
     
-    // 1. Predict Crop Yield and Get Recommendations in Parallel
+    // 1. Predict Crop Yield and Get Recommendations in Parallel for speed
     const [predictionOutput, recommendationsOutput] = await Promise.all([
       predictCropYields({
         cropType: crop,
@@ -66,14 +66,14 @@ export async function getIndiYieldPrediction(
       provideActionableRecommendations({
           crop: crop,
           region: region,
-          predictedYield: parseYield(mockHistoricalData), // Use average yield for initial recommendations parallel run
+          predictedYield: parseYield(mockHistoricalData), // Use a default average yield for the parallel recommendations run. This is key for speed.
           landDescription: landDescription,
           weatherPatterns: mockWeatherPatterns,
       })
     ]);
 
     return {
-      predictedYield: predictionOutput.predictedYield,
+      predictedYield: `${predictionOutput.predictedYield} tons/hectare`,
       recommendations: {
         irrigation: recommendationsOutput.irrigationRecommendation,
         fertilization: recommendationsOutput.fertilizationRecommendation,
