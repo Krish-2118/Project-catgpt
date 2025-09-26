@@ -49,7 +49,7 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
       case 'FORM':
         return (
            <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-             <PredictionForm onPredictionComplete={handlePredictionComplete} onBack={handleBackToDashboard} />
+             <PredictionForm onPredictionComplete={handlePredictionComplete} onBack={handleBackToDashboard} language={language} locales={locales} />
            </motion.div>
         );
       case 'RESULT':

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -23,6 +24,7 @@ import { Skeleton } from "./ui/skeleton";
 import { SuggestedCrop } from "@/ai/flows/suggest-crop";
 import LandDetailsForm, { landDetailsSchema } from "./land-details-form";
 import { useToast } from "@/hooks/use-toast";
+import type { Language } from "@/app/page";
 
 
 export const formSchema = z.object({
@@ -35,14 +37,9 @@ export const formSchema = z.object({
 type PredictionFormProps = {
   onPredictionComplete: (prediction: PredictionResult, marketData: MarketDataResult, formData: any) => void;
   onBack: () => void;
+  language: Language;
+  locales: any;
 };
-
-const steps = [
-    { id: 'land', name: 'Describe Land' },
-    { id: 'crop', name: 'Select Crop' },
-    { id: 'season', name: 'Growing Season' },
-    { id: 'confirm', name: 'Get Prediction' },
-]
 
 const cropIcons: { [key: string]: React.ReactNode } = {
     rice: <Droplets className="h-8 w-8 text-blue-400"/>,
@@ -65,12 +62,21 @@ const seasons = [
 ]
 
 
-export default function PredictionForm({ onPredictionComplete, onBack }: PredictionFormProps) {
+export default function PredictionForm({ onPredictionComplete, onBack, language, locales }: PredictionFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestions, setSuggestions] = useState<SuggestionResult | null>(null);
   const { toast } = useToast();
+
+  const t = locales[language].form;
+
+  const steps = [
+    { id: 'land', name: t.steps.land },
+    { id: 'crop', name: t.steps.crop },
+    { id: 'season', name: t.steps.season },
+    { id: 'confirm', name: t.steps.confirm },
+  ]
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -100,15 +106,17 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
         description: "This may take a moment. The AI is analyzing your data.",
     });
     try {
-        const [prediction, marketData] = await Promise.all([
-            getIndiYieldPrediction(data),
-            getMarketData(data.crop, data.region)
-        ]);
+        // 1. Predict Crop Yield first
+        const predictionOutput = await getIndiYieldPrediction(data);
+        
+        // 2. Then get market data
+        const marketData = await getMarketData(data.crop, data.region);
+
         toast({
             title: "Prediction Complete!",
             description: "Your personalized results are ready.",
         });
-        onPredictionComplete(prediction, marketData, data);
+        onPredictionComplete(predictionOutput, marketData, data);
     } catch (error) {
          toast({
             variant: "destructive",
@@ -178,8 +186,8 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                 className="space-y-4"
                 >
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold">Let's Get Started</h2>
-                    <p className="text-muted-foreground mt-2">Begin by providing details about your farmland in Odisha.</p>
+                    <h2 className="text-3xl font-bold">{t.land.title}</h2>
+                    <p className="text-muted-foreground mt-2">{t.land.description}</p>
                 </div>
                 <LandDetailsForm />
               </motion.div>
@@ -195,8 +203,8 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                 className="space-y-6"
                 >
                 <div className="text-center">
-                    <h3 className="text-2xl font-bold">Select Your Crop</h3>
-                    <p className="text-muted-foreground mt-1">Based on your land, we suggest these crops. Choose one or select another from the list.</p>
+                    <h3 className="text-2xl font-bold">{t.crop.title}</h3>
+                    <p className="text-muted-foreground mt-1">{t.crop.description}</p>
                 </div>
                 
                  {isSuggesting ? (
@@ -208,7 +216,7 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                 ) : (
                     suggestions && (
                         <div>
-                        <h4 className="flex items-center gap-2 font-semibold mb-3 text-primary"><Lightbulb className="h-5 w-5"/> AI Suggestions</h4>
+                        <h4 className="flex items-center gap-2 font-semibold mb-3 text-primary"><Lightbulb className="h-5 w-5"/> {t.crop.suggestions}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                           {suggestions.suggestions.map((suggestion: SuggestedCrop) => (
                             <Card 
@@ -240,7 +248,7 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                   name="crop"
                   render={({ field }) => (
                     <FormItem>
-                        <h4 className="flex items-center gap-2 font-semibold mb-3"><Tractor className="h-5 w-5"/> Or Choose Another Crop</h4>
+                        <h4 className="flex items-center gap-2 font-semibold mb-3"><Tractor className="h-5 w-5"/> {t.crop.other}</h4>
                       <FormControl>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                           {crops.map((crop) => (
@@ -277,8 +285,8 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                     className="space-y-6"
                 >
                     <div className="text-center">
-                        <h3 className="text-2xl font-bold">Select the Sowing Season</h3>
-                        <p className="text-muted-foreground mt-1">Choose the appropriate season for your crop.</p>
+                        <h3 className="text-2xl font-bold">{t.season.title}</h3>
+                        <p className="text-muted-foreground mt-1">{t.season.description}</p>
                     </div>
                     <FormField
                         control={form.control}
@@ -321,31 +329,31 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                     transition={{ duration: 0.3 }}
                     className="text-center space-y-6"
                  >
-                    <h3 className="text-2xl font-bold">Confirm Your Selection</h3>
+                    <h3 className="text-2xl font-bold">{t.confirm.title}</h3>
                      <Card className="max-w-2xl mx-auto text-left bg-card/50">
                         <CardHeader>
-                            <CardTitle>Prediction Summary</CardTitle>
-                            <CardDescription>Review your selections before generating the AI prediction.</CardDescription>
+                            <CardTitle>{t.confirm.summaryTitle}</CardTitle>
+                            <CardDescription>{t.confirm.description}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4 pt-4">
-                            <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
+                            <h4 className="font-semibold mb-2 border-b pb-2">{t.confirm.landDetails}</h4>
                             <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm capitalize">
-                                <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
-                                <p><strong className="text-muted-foreground">Soil Type:</strong> {getValues('landDetails.soilType')}</p>
-                                <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource').replace('/', ' / ')}</p>
-                                <p><strong className="text-muted-foreground">Topography:</strong> {getValues('landDetails.topography')}</p>
+                                <p><strong className="text-muted-foreground">{t.confirm.district}:</strong> {getValues('landDetails.district')}</p>
+                                <p><strong className="text-muted-foreground">{t.confirm.soilType}:</strong> {getValues('landDetails.soilType')}</p>
+                                <p><strong className="text-muted-foreground">{t.confirm.irrigation}:</strong> {getValues('landDetails.irrigationSource').replace('/', ' / ')}</p>
+                                <p><strong className="text-muted-foreground">{t.confirm.topography}:</strong> {getValues('landDetails.topography')}</p>
                             </div>
                              <div className="flex justify-around items-center pt-4 border-t mt-4">
                                 <div className="text-center">
-                                    <p className="text-muted-foreground text-sm">Crop</p>
+                                    <p className="text-muted-foreground text-sm">{t.confirm.crop}</p>
                                     <p className="font-bold text-lg">{selectedCrop?.label}</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-muted-foreground text-sm">Region</p>
+                                    <p className="text-muted-foreground text-sm">{t.confirm.region}</p>
                                     <p className="font-bold text-lg capitalize">{getValues('region')}</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-muted-foreground text-sm">Season</p>
+                                    <p className="text-muted-foreground text-sm">{t.confirm.season}</p>
                                     <p className="font-bold text-lg capitalize">
                                         {getValues('sowingSeason')}
                                     </p>
@@ -354,7 +362,7 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                         </CardContent>
                     </Card>
                      <p className="text-muted-foreground max-w-md mx-auto">
-                        You're all set! Click the button below to generate your personalized crop yield prediction and recommendations.
+                        {t.confirm.cta}
                     </p>
                 </motion.div>
             )}
@@ -365,16 +373,16 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
               {currentStep > 0 ? (
                 <Button type="button" variant="outline" onClick={prevStep} disabled={isLoading}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  {t.buttons.back}
                 </Button>
               ) : <Button type="button" variant="ghost" onClick={onBack} disabled={isLoading}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Dashboard
+                  {t.buttons.backToDashboard}
                 </Button>}
 
               {currentStep < steps.length - 1 && (
                 <Button type="button" onClick={nextStep} disabled={isSuggesting} size="lg">
-                 { isSuggesting ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Fetching Suggestions... </> : <> Next <ArrowRight className="ml-2 h-4 w-4" /> </>}
+                 { isSuggesting ? <> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t.buttons.fetchingSuggestions} </> : <> {t.buttons.next} <ArrowRight className="ml-2 h-4 w-4" /> </>}
                 </Button>
               )}
 
@@ -383,12 +391,12 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating Prediction...
+                      {t.buttons.generatingPrediction}
                     </>
                   ) : (
                     <>
                       <Lightbulb className="mr-2 h-5 w-5"/>
-                      Get AI Prediction
+                      {t.buttons.getPrediction}
                     </>
                   )}
                 </Button>
