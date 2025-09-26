@@ -52,27 +52,25 @@ export async function getIndiYieldPrediction(
     const mockWeatherPatterns = `The region of ${region} typically experiences a monsoon season from June to September, with Rabi and Zaid seasons having distinct weather patterns.`;
     const mockSoilHealthMetrics = `Soil in this part of ${region} is predominantly ${data.landDetails.soilType}.`;
     
-    // 1. Predict Crop Yield - The AI may use the getLongRangeWeatherForecast tool here.
-    const predictionOutput = await predictCropYields({
-      cropType: crop,
-      region: region,
-      sowingSeason: sowingSeason,
-      landDescription: landDescription,
-      historicalData: mockHistoricalData,
-      weatherPatterns: mockWeatherPatterns,
-      soilHealthMetrics: mockSoilHealthMetrics,
-    });
-
-    const predictedYieldValue = parseYield(predictionOutput.predictedYield);
-    
-    // 2. Get Actionable Recommendations
-    const recommendationsOutput = await provideActionableRecommendations({
-        crop: crop,
+    // 1. Predict Crop Yield and Get Recommendations in Parallel
+    const [predictionOutput, recommendationsOutput] = await Promise.all([
+      predictCropYields({
+        cropType: crop,
         region: region,
-        predictedYield: predictedYieldValue,
+        sowingSeason: sowingSeason,
         landDescription: landDescription,
-        weatherPatterns: mockWeatherPatterns, // Reusing for simplicity
-    });
+        historicalData: mockHistoricalData,
+        weatherPatterns: mockWeatherPatterns,
+        soilHealthMetrics: mockSoilHealthMetrics,
+      }),
+      provideActionableRecommendations({
+          crop: crop,
+          region: region,
+          predictedYield: parseYield(mockHistoricalData), // Use average yield for initial recommendations parallel run
+          landDescription: landDescription,
+          weatherPatterns: mockWeatherPatterns,
+      })
+    ]);
 
     return {
       predictedYield: predictionOutput.predictedYield,
