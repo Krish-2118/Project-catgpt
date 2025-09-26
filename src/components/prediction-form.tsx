@@ -387,7 +387,7 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                     </>
                   ) : (
                     <>
-                      <Bot className="mr-2 h-5 w-5"/>
+                      <Lightbulb className="mr-2 h-5 w-5"/>
                       Get AI Prediction
                     </>
                   )}

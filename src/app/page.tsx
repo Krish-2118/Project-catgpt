@@ -14,11 +14,21 @@ export default function Home() {
       title: "IndiYield",
       tagline: "Your AI-Powered Agricultural Co-Pilot for Odisha",
       toggleButton: "ଓଡ଼ିଆରେ ଦେଖନ୍ତୁ",
+      dashboard: {
+        title: "Ready for your next cycle?",
+        description: "Use our powerful AI to get detailed yield predictions and actionable recommendations for your crops.",
+        button: "Start a New Prediction",
+      }
     },
     or: {
-      title: "ଇଣ୍ଡି-ਯੀల్ਡ",
+      title: "ଇଣ୍ଡି-ଇଲ୍ଡ",
       tagline: "ଓଡ଼ିଶା ପାଇଁ ଆପଣଙ୍କର AI-ଚାଳିତ କୃଷି ସହ-ପାଇଲଟ",
       toggleButton: "View in English",
+      dashboard: {
+        title: "ଆପଣଙ୍କ ପରବର୍ତ୍ତୀ ଚକ୍ର ପାଇଁ ପ୍ରସ୍ତୁତ କି?",
+        description: "ଆପଣଙ୍କ ଫସଲ ପାଇଁ ବିସ୍ତୃତ ଅମଳର ପୂର୍ବାନୁମାନ ଏବଂ କାର୍ଯ୍ୟକ୍ଷମ ସୁପାରିଶ ପାଇବାକୁ ଆମର ଶକ୍ତିଶାଳୀ AI ବ୍ୟବହାର କରନ୍ତୁ।",
+        button: "ଏକ ନୂଆ ପୂର୍ବାନୁମାନ ଆରମ୍ଭ କରନ୍ତୁ",
+      }
     }
   }
 

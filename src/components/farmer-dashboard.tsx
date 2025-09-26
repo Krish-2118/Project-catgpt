@@ -23,6 +23,8 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
   const [marketData, setMarketData] = useState<MarketDataResult | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
+  const t = locales[language];
+
   const handlePredictionComplete = (results: PredictionResult, marketData: MarketDataResult, submittedData: any) => {
     setPredictionResult(results);
     setMarketData(marketData);
@@ -81,14 +83,13 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
                   <div className="flex h-full">
                     <div className="flex flex-col justify-between p-6">
                         <div>
-                          <h2 className="text-2xl font-bold">Ready for your next cycle?</h2>
+                          <h2 className="text-2xl font-bold">{t.dashboard.title}</h2>
                           <p className="text-muted-foreground mt-2 max-w-md">
-                            Use our powerful AI to get detailed yield predictions and actionable
-                            recommendations for your crops.
+                            {t.dashboard.description}
                           </p>
                         </div>
                         <Button size="lg" onClick={() => setViewState('FORM')} className="mt-4 w-fit">
-                            <span>Start a New Prediction</span>
+                            <span>{t.dashboard.button}</span>
                             <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                     </div>
