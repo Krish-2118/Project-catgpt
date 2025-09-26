@@ -44,7 +44,7 @@ export default function Home() {
     <main className="min-h-screen container mx-auto py-8">
       <header className="mb-12 flex flex-col items-center text-center">
         <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center">
-            <div className="flex-1 md:text-center">
+            <div className="flex-1 text-center">
                 <h1 className="text-4xl font-bold tracking-tight text-primary">{t.title}</h1>
             </div>
             <div className="mt-4 md:mt-0">
