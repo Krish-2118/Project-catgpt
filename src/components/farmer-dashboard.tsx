@@ -4,7 +4,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Leaf } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PastPredictions from "./past-predictions";
 import RevenueChart from "./revenue-chart";
 import LandStatus from "./land-status";
@@ -72,19 +71,8 @@ export default function FarmerDashboard() {
       default:
         return (
           <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-             <div className="flex items-center justify-between space-y-2">
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                    Welcome Back, Farmer!
-                  </h1>
-                  <p className="text-muted-foreground">
-                    Here's a snapshot of your farm's performance and health.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                <Card className="lg:col-span-2 bg-primary/5 border-primary/20">
+             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div className="lg:col-span-2 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-xl">
                   <div className="flex h-full">
                     <div className="flex flex-col justify-between p-6">
                         <div>
@@ -99,19 +87,19 @@ export default function FarmerDashboard() {
                             <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                     </div>
-                    <div className="hidden md:flex flex-1 items-center justify-center bg-primary/10 rounded-r-xl">
-                        <Leaf className="h-24 w-24 text-primary/40" />
+                    <div className="hidden md:flex flex-1 items-center justify-center p-6">
+                        <Leaf className="h-24 w-24 text-primary/50" />
                     </div>
                   </div>
-                </Card>
+                </div>
                 <Notifications />
               </div>
 
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
-                <div className="lg:col-span-4">
+              <div className="grid gap-8 md:grid-cols-7">
+                <div className="md:col-span-4">
                   <RevenueChart />
                 </div>
-                <div className="lg:col-span-3">
+                <div className="md:col-span-3">
                    <LandStatus />
                 </div>
               </div>
@@ -125,7 +113,7 @@ export default function FarmerDashboard() {
   }
 
   return (
-    <div className="flex-1 space-y-8 p-4 md:p-8">
+    <div className="flex-1 space-y-8">
       <AnimatePresence mode="wait">
         {renderContent()}
       </AnimatePresence>

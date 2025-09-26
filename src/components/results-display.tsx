@@ -28,9 +28,9 @@ export default function ResultsDisplay({
   results: PredictionResult;
 }) {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg border-primary/20">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold font-headline">
+        <CardTitle className="text-2xl font-bold">
           AI Prediction Results
         </CardTitle>
         <CardDescription>
@@ -38,7 +38,7 @@ export default function ResultsDisplay({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="text-center p-6 bg-muted/50 rounded-lg">
+        <div className="text-center p-6 bg-muted/50 rounded-xl">
           <p className="text-muted-foreground text-sm">Predicted Yield</p>
           <p className="text-4xl font-bold text-primary">
             {results.predictedYield}
@@ -56,36 +56,36 @@ export default function ResultsDisplay({
             defaultValue="item-1"
           >
             <AccordionItem value="item-1">
-              <AccordionTrigger className="font-semibold">
+              <AccordionTrigger className="font-semibold text-base">
                 <div className="flex items-center gap-2">
                   {recommendationIcons.irrigation}
-                  <span>Irrigation</span>
+                  <span>Irrigation Plan</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                {results.recommendations.irrigation}
+              <AccordionContent className="text-muted-foreground text-base/relaxed prose">
+                <p>{results.recommendations.irrigation}</p>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger className="font-semibold">
+              <AccordionTrigger className="font-semibold text-base">
                  <div className="flex items-center gap-2">
                   {recommendationIcons.fertilization}
-                  <span>Fertilization</span>
+                  <span>Fertilization Strategy</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                {results.recommendations.fertilization}
+              <AccordionContent className="text-muted-foreground text-base/relaxed prose">
+                <p>{results.recommendations.fertilization}</p>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
-              <AccordionTrigger className="font-semibold">
+              <AccordionTrigger className="font-semibold text-base">
                  <div className="flex items-center gap-2">
                   {recommendationIcons.pestControl}
-                  <span>Pest Control</span>
+                  <span>Pest Control Advisory</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                {results.recommendations.pestControl}
+              <AccordionContent className="text-muted-foreground text-base/relaxed prose">
+                <p>{results.recommendations.pestControl}</p>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout, Leaf } from "lucide-react";
+import { Wheat, Loader2, ArrowRight, ArrowLeft, Lightbulb, Tractor, Check, Sun, Cloud, Droplets, Sprout, Leaf, Mountain, Waves, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +49,12 @@ const cropIcons: { [key: string]: React.ReactNode } = {
     wheat: <Wheat className="h-8 w-8 text-yellow-600"/>,
     maize: <Sprout className="h-8 w-8 text-green-500"/>,
     sugarcane: <Leaf className="h-8 w-8 text-green-600"/>,
-    cotton: <div className="h-8 w-8 text-gray-200 font-bold text-3xl flex items-center justify-center">*</div>,
+    cotton: <div className="h-8 w-8 bg-gray-200 rounded-full"/>,
+    soybean: <Sprout className="h-8 w-8 text-yellow-500"/>,
+    potato: <Sprout className="h-8 w-8 text-amber-700"/>,
+    mustard: <Sprout className="h-8 w-8 text-yellow-400"/>,
+    jute: <Leaf className="h-8 w-8 text-lime-600"/>,
+    tomato: <div className="h-8 w-8 bg-red-500 rounded-full"/>,
     default: <Wheat className="h-8 w-8 text-yellow-600"/>
 }
 
@@ -90,6 +95,10 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
   
   const handleFinalSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    toast({
+        title: "Generating your AI prediction...",
+        description: "This may take a moment. The AI is analyzing your data.",
+    });
     try {
         const [prediction, marketData] = await Promise.all([
             getIndiYieldPrediction(data),
@@ -97,7 +106,7 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
         ]);
         toast({
             title: "Prediction Complete!",
-            description: "Your results are ready.",
+            description: "Your personalized results are ready.",
         });
         onPredictionComplete(prediction, marketData, data);
     } catch (error) {
@@ -157,20 +166,20 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
     <div className="w-full max-w-4xl mx-auto">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFinalSubmit)} className="space-y-8">
-            <Progress value={((currentStep) / (steps.length -1)) * 100} className="h-2" />
+            <Progress value={((currentStep + 1) / (steps.length)) * 100} className="h-2" />
             <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <motion.div
                 key="land"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-4"
                 >
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold font-headline">Let's Get Started</h2>
-                    <p className="text-muted-foreground mt-2">Begin by providing details about your farmland.</p>
+                    <h2 className="text-3xl font-bold">Let's Get Started</h2>
+                    <p className="text-muted-foreground mt-2">Begin by providing details about your farmland in Odisha.</p>
                 </div>
                 <LandDetailsForm />
               </motion.div>
@@ -179,9 +188,9 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
             {currentStep === 1 && (
               <motion.div
                 key="crop"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
                 >
@@ -206,13 +215,15 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                                 key={suggestion.cropKey} 
                                 onClick={() => setValue("crop", suggestion.cropKey, { shouldValidate: true })}
                                 className={cn(
-                                    "cursor-pointer transition-all hover:shadow-md flex flex-col bg-card",
+                                    "cursor-pointer transition-all hover:shadow-lg flex flex-col bg-card",
                                     getValues('crop') === suggestion.cropKey ? "border-primary ring-2 ring-primary" : "border-border"
                                 )}
                             >
-                                <CardHeader className="flex-row items-center justify-between pb-2">
+                                <CardHeader className="flex-row items-start justify-between pb-2">
                                     <CardTitle className="text-lg">{suggestion.cropName}</CardTitle>
-                                    {getValues('crop') === suggestion.cropKey && <Check className="h-5 w-5 text-primary" />}
+                                    <div className="h-7 w-7 rounded-full flex items-center justify-center bg-transparent">
+                                        {getValues('crop') === suggestion.cropKey && <Check className="h-5 w-5 text-primary" />}
+                                    </div>
                                 </CardHeader>
                                 <CardContent className="flex-grow">
                                    <p className="text-sm text-muted-foreground">{suggestion.reason}</p>
@@ -259,9 +270,9 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
             {currentStep === 2 && (
                 <motion.div
                     key="season"
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -30 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                 >
@@ -275,17 +286,17 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
                                         {seasons.map((season) => (
                                             <Card
                                                 key={season.id}
                                                 onClick={() => field.onChange(season.id)}
                                                 className={cn(
-                                                    "cursor-pointer transition-all hover:shadow-md text-center bg-card",
+                                                    "cursor-pointer transition-all hover:shadow-lg text-center bg-card",
                                                     field.value === season.id ? "border-primary ring-2 ring-primary" : "border-border"
                                                 )}
                                             >
-                                                <CardContent className="p-4 flex flex-col items-center justify-center gap-2 aspect-square">
+                                                <CardContent className="p-6 flex flex-col items-center justify-center gap-3 aspect-[4/3]">
                                                     {season.icon}
                                                     <span className="font-semibold text-lg">{season.name}</span>
                                                     <span className="text-muted-foreground text-sm">{season.description}</span>
@@ -304,9 +315,9 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
             {currentStep === 3 && (
                  <motion.div
                     key="confirm"
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -30 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
                     className="text-center space-y-6"
                  >
@@ -318,10 +329,10 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                         </CardHeader>
                         <CardContent className="space-y-4 pt-4">
                             <h4 className="font-semibold mb-2 border-b pb-2">Land Details:</h4>
-                            <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                            <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm capitalize">
                                 <p><strong className="text-muted-foreground">District:</strong> {getValues('landDetails.district')}</p>
                                 <p><strong className="text-muted-foreground">Soil Type:</strong> {getValues('landDetails.soilType')}</p>
-                                <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource')}</p>
+                                <p><strong className="text-muted-foreground">Irrigation:</strong> {getValues('landDetails.irrigationSource').replace('/', ' / ')}</p>
                                 <p><strong className="text-muted-foreground">Topography:</strong> {getValues('landDetails.topography')}</p>
                             </div>
                              <div className="flex justify-around items-center pt-4 border-t mt-4">
@@ -331,12 +342,12 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                                 </div>
                                 <div className="text-center">
                                     <p className="text-muted-foreground text-sm">Region</p>
-                                    <p className="font-bold text-lg">Odisha</p>
+                                    <p className="font-bold text-lg capitalize">{getValues('region')}</p>
                                 </div>
                                 <div className="text-center">
                                     <p className="text-muted-foreground text-sm">Season</p>
-                                    <p className="font-bold text-lg">
-                                        {seasons.find(s => s.id === getValues('sowingSeason'))?.name}
+                                    <p className="font-bold text-lg capitalize">
+                                        {getValues('sowingSeason')}
                                     </p>
                                 </div>
                             </div>
@@ -375,7 +386,10 @@ export default function PredictionForm({ onPredictionComplete, onBack }: Predict
                       Generating Prediction...
                     </>
                   ) : (
-                    "Get Prediction & Recommendations"
+                    <>
+                      <Bot className="mr-2 h-5 w-5"/>
+                      Get AI Prediction
+                    </>
                   )}
                 </Button>
               )}
