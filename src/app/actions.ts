@@ -21,12 +21,6 @@ export type MarketDataResult = MarketIntelligenceOutput;
 export type SuggestionResult = SuggestCropOutput;
 
 
-// Helper function to extract a number from a string
-const parseYield = (yieldString: string): number => {
-    const match = yieldString.match(/(\d+(\.\d+)?)/);
-    return match ? parseFloat(match[0]) : 2.8; // Return a default average if parsing fails
-};
-
 export async function getCropSuggestions(landDescription: string, region: string): Promise<SuggestionResult> {
     try {
         const suggestions = await suggestCrop({ landDescription, region });
@@ -52,25 +46,25 @@ export async function getIndiYieldPrediction(
     const mockWeatherPatterns = `The region of ${region} typically experiences a monsoon season from June to September, with Rabi and Zaid seasons having distinct weather patterns.`;
     const mockSoilHealthMetrics = `Soil in this part of ${region} is predominantly ${data.landDetails.soilType}.`;
     
-    // 1. Predict Crop Yield and Get Recommendations in Parallel for speed
-    const [predictionOutput, recommendationsOutput] = await Promise.all([
-      predictCropYields({
-        cropType: crop,
+    // 1. Predict Crop Yield first
+    const predictionOutput = await predictCropYields({
+      cropType: crop,
+      region: region,
+      sowingSeason: sowingSeason,
+      landDescription: landDescription,
+      historicalData: mockHistoricalData,
+      weatherPatterns: mockWeatherPatterns,
+      soilHealthMetrics: mockSoilHealthMetrics,
+    });
+
+    // 2. Then, get recommendations using the actual predicted yield
+    const recommendationsOutput = await provideActionableRecommendations({
+        crop: crop,
         region: region,
-        sowingSeason: sowingSeason,
+        predictedYield: predictionOutput.predictedYield,
         landDescription: landDescription,
-        historicalData: mockHistoricalData,
         weatherPatterns: mockWeatherPatterns,
-        soilHealthMetrics: mockSoilHealthMetrics,
-      }),
-      provideActionableRecommendations({
-          crop: crop,
-          region: region,
-          predictedYield: parseYield(mockHistoricalData), // Use a default average yield for the parallel recommendations run. This is key for speed.
-          landDescription: landDescription,
-          weatherPatterns: mockWeatherPatterns,
-      })
-    ]);
+    });
 
     return {
       predictedYield: `${predictionOutput.predictedYield} tons/hectare`,
