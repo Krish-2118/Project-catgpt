@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Leaf, Droplets, FlaskConical, Bug } from "lucide-react";
@@ -15,6 +16,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import type { PredictionResult } from "@/app/actions";
+import type { Language } from "@/app/page";
+
 
 const recommendationIcons = {
   irrigation: <Droplets className="h-5 w-5 text-blue-500" />,
@@ -24,22 +27,28 @@ const recommendationIcons = {
 
 export default function ResultsDisplay({
   results,
+  language,
+  locales,
 }: {
   results: PredictionResult;
+  language: Language;
+  locales: any;
 }) {
+  const t = locales[language].results.resultsDisplay;
+  
   return (
     <Card className="shadow-lg border-primary/20">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">
-          AI Prediction Results
+          {t.title}
         </CardTitle>
         <CardDescription>
-          Your personalized yield forecast and recommendations are ready.
+          {t.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="text-center p-6 bg-muted/50 rounded-xl">
-          <p className="text-muted-foreground text-sm">Predicted Yield</p>
+          <p className="text-muted-foreground text-sm">{t.predictedYield}</p>
           <p className="text-4xl font-bold text-primary">
             {results.predictedYield}
           </p>
@@ -47,7 +56,7 @@ export default function ResultsDisplay({
 
         <div>
           <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
-            <Leaf className="h-5 w-5 text-primary" /> Actionable Recommendations
+            <Leaf className="h-5 w-5 text-primary" /> {t.recommendations}
           </h3>
           <Accordion
             type="single"
@@ -59,7 +68,7 @@ export default function ResultsDisplay({
               <AccordionTrigger className="font-semibold text-base">
                 <div className="flex items-center gap-2">
                   {recommendationIcons.irrigation}
-                  <span>Irrigation Plan</span>
+                  <span>{t.irrigation}</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-base/relaxed prose">
@@ -70,7 +79,7 @@ export default function ResultsDisplay({
               <AccordionTrigger className="font-semibold text-base">
                  <div className="flex items-center gap-2">
                   {recommendationIcons.fertilization}
-                  <span>Fertilization Strategy</span>
+                  <span>{t.fertilization}</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-base/relaxed prose">
@@ -81,7 +90,7 @@ export default function ResultsDisplay({
               <AccordionTrigger className="font-semibold text-base">
                  <div className="flex items-center gap-2">
                   {recommendationIcons.pestControl}
-                  <span>Pest Control Advisory</span>
+                  <span>{t.pestControl}</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-base/relaxed prose">

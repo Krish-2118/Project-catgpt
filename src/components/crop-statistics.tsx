@@ -1,8 +1,10 @@
 
+
 "use client";
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import type { Language } from '@/app/page';
 
 const mockData = [
   { name: '2019', yield: 2.5, allCrops: 2.2 },
@@ -12,15 +14,17 @@ const mockData = [
   { name: '2023', yield: 3.0, allCrops: 2.7 },
 ];
 
-export default function CropStatistics({ crop, region }: { crop: string, region: string }) {
+export default function CropStatistics({ crop, region, language, locales }: { crop: string, region: string, language: Language, locales: any }) {
+    const t = locales[language].results.cropStatistics;
+
     const isAllCrops = crop === 'all';
     const regionLabel = region.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    const cropLabel = isAllCrops ? 'All Crops' : crop.charAt(0).toUpperCase() + crop.slice(1);
+    const cropLabel = isAllCrops ? t.allCrops : crop.charAt(0).toUpperCase() + crop.slice(1);
     
-    const title = isAllCrops ? `Regional Yield Averages` : `Historical Yield for ${cropLabel}`;
-    const description = isAllCrops ? `Average yield for all major crops in ${regionLabel}.` : `Yield data in ${regionLabel} over the last 5 years.`;
+    const title = isAllCrops ? t.regionalTitle : `${t.historicalTitle} ${cropLabel}`;
+    const description = isAllCrops ? `${t.regionalDescription} ${regionLabel}.` : `${t.historicalDescription} ${regionLabel} over the last 5 years.`;
     const dataKey = isAllCrops ? "allCrops" : "yield";
-    const barName = isAllCrops ? "Avg. Yield (t/ha)" : "Yield (tons/hectare)";
+    const barName = isAllCrops ? t.avgYieldLabel : t.yieldLabel;
 
 
     return (
@@ -34,7 +38,7 @@ export default function CropStatistics({ crop, region }: { crop: string, region:
                     <BarChart data={mockData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
-                        <YAxis label={{ value: 'Yield (t/ha)', angle: -90, position: 'insideLeft' }} />
+                        <YAxis label={{ value: t.yieldLabel, angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
                         <Legend />
                         <Bar dataKey={dataKey} fill="hsl(var(--primary))" name={barName} />

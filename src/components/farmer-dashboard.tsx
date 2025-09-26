@@ -24,7 +24,7 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
   const [marketData, setMarketData] = useState<MarketDataResult | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
-  const t = locales[language].dashboard;
+  const t = locales[language];
 
   const handlePredictionComplete = (results: PredictionResult, marketData: MarketDataResult, submittedData: any) => {
     setPredictionResult(results);
@@ -56,16 +56,16 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
         return (
           <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">Prediction Results</h2>
-              <Button onClick={handleStartNew}>Start New Prediction</Button>
+              <h2 className="text-3xl font-bold">{t.results.title}</h2>
+              <Button onClick={handleStartNew}>{t.results.startNew}</Button>
             </div>
-            {predictionResult && <ResultsDisplay results={predictionResult} />}
+            {predictionResult && <ResultsDisplay results={predictionResult} language={language} locales={locales} />}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                {marketData && <MarketPrices marketData={marketData} />}
+                {marketData && <MarketPrices marketData={marketData} language={language} locales={locales} />}
               </div>
               <div>
-                {formData && <CropStatistics crop={formData.crop} region={formData.region} />}
+                {formData && <CropStatistics crop={formData.crop} region={formData.region} language={language} locales={locales} />}
               </div>
             </div>
           </motion.div>
@@ -84,13 +84,13 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
                   <div className="flex h-full">
                     <div className="flex flex-col justify-between p-6">
                         <div>
-                          <h2 className="text-2xl font-bold">{t.title}</h2>
+                          <h2 className="text-2xl font-bold">{t.dashboard.title}</h2>
                           <p className="text-muted-foreground mt-2 max-w-md">
-                            {t.description}
+                            {t.dashboard.description}
                           </p>
                         </div>
                         <Button size="lg" onClick={() => setViewState('FORM')} className="mt-4 w-fit">
-                            <span>{t.button}</span>
+                            <span>{t.dashboard.button}</span>
                             <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                     </div>
