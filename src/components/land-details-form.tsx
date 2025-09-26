@@ -106,7 +106,7 @@ export default function LandDetailsForm({ language, locales }: { language: Langu
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                        {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
+                            {irrigationSources.map(i => <SelectItem key={i} value={i.toLowerCase()}>{i}</SelectItem>)}
                         </SelectContent>
                     </Select>
                     <FormMessage />
