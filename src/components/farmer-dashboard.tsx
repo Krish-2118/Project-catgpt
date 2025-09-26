@@ -5,7 +5,6 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Leaf } from "lucide-react";
 import PastPredictions from "./past-predictions";
-import RevenueChart from "./revenue-chart";
 import LandStatus from "./land-status";
 import PredictionForm from "./prediction-form";
 import { PredictionResult, MarketDataResult } from "@/app/actions";
@@ -95,17 +94,9 @@ export default function FarmerDashboard() {
                 <Notifications />
               </div>
 
-              <div className="grid gap-8 md:grid-cols-7">
-                <div className="md:col-span-4">
-                  <RevenueChart />
-                </div>
-                <div className="md:col-span-3">
-                   <LandStatus />
-                </div>
-              </div>
-
-               <div className="grid gap-8">
-                  <PastPredictions />
+              <div className="grid gap-8 md:grid-cols-2">
+                <LandStatus />
+                <PastPredictions />
               </div>
           </motion.div>
         );
