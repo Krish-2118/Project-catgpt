@@ -251,7 +251,7 @@ export default function Home() {
   return (
     <main className="min-h-screen container mx-auto py-8">
       <header className="mb-12">
-        <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center px-4">
+        <div className="w-full flex flex-col md:flex-row justify-center items-center px-4">
             <div className="flex-1 text-center md:text-left order-2 md:order-1">
                 <h1 className="text-4xl font-bold tracking-tight text-primary text-center">{t.title}</h1>
                 <p className="text-muted-foreground mt-2 text-center">{t.tagline}</p>
@@ -265,3 +265,5 @@ export default function Home() {
     </main>
   );
 }
+
+    
