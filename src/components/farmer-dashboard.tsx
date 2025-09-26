@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -23,7 +24,7 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
   const [marketData, setMarketData] = useState<MarketDataResult | null>(null);
   const [formData, setFormData] = useState<any>(null);
 
-  const t = locales[language];
+  const t = locales[language].dashboard;
 
   const handlePredictionComplete = (results: PredictionResult, marketData: MarketDataResult, submittedData: any) => {
     setPredictionResult(results);
@@ -83,13 +84,13 @@ export default function FarmerDashboard({ language, locales }: { language: Langu
                   <div className="flex h-full">
                     <div className="flex flex-col justify-between p-6">
                         <div>
-                          <h2 className="text-2xl font-bold">{t.dashboard.title}</h2>
+                          <h2 className="text-2xl font-bold">{t.title}</h2>
                           <p className="text-muted-foreground mt-2 max-w-md">
-                            {t.dashboard.description}
+                            {t.description}
                           </p>
                         </div>
                         <Button size="lg" onClick={() => setViewState('FORM')} className="mt-4 w-fit">
-                            <span>{t.dashboard.button}</span>
+                            <span>{t.button}</span>
                             <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                     </div>
