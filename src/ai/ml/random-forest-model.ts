@@ -1,4 +1,3 @@
-// src/ai/ml/random-forest-model.ts
 /**
  * @fileOverview Random Forest model for crop prediction based on soil and climate data
  */
@@ -38,78 +37,14 @@ export function generateTrainingData(): TrainingData[] {
   const trainingData: TrainingData[] = [];
 
   const cropCharacteristics: Record<string, Partial<CropFeatures>> = {
-    rice: {
-      soilPH: 6.5,
-      nitrogen: 80,
-      phosphorus: 40,
-      potassium: 40,
-      temperature: 25,
-      humidity: 80,
-      rainfall: 150,
-    },
-    wheat: {
-      soilPH: 6.8,
-      nitrogen: 100,
-      phosphorus: 50,
-      potassium: 30,
-      temperature: 22,
-      humidity: 60,
-      rainfall: 80,
-    },
-    cotton: {
-      soilPH: 6.5,
-      nitrogen: 120,
-      phosphorus: 60,
-      potassium: 50,
-      temperature: 28,
-      humidity: 65,
-      rainfall: 100,
-    },
-    sugarcane: {
-      soilPH: 6.5,
-      nitrogen: 110,
-      phosphorus: 55,
-      potassium: 60,
-      temperature: 30,
-      humidity: 75,
-      rainfall: 140,
-    },
-    maize: {
-      soilPH: 6.5,
-      nitrogen: 90,
-      phosphorus: 45,
-      potassium: 45,
-      temperature: 26,
-      humidity: 70,
-      rainfall: 90,
-    },
-    pulses: {
-      soilPH: 7.0,
-      nitrogen: 40,
-      phosphorus: 50,
-      potassium: 40,
-      temperature: 24,
-      humidity: 65,
-      rainfall: 70,
-    },
-    vegetables: {
-      soilPH: 6.5,
-      nitrogen: 100,
-      phosphorus: 70,
-      potassium: 80,
-      temperature: 25,
-      humidity: 75,
-      rainfall: 110,
-    },
-    oilseeds: {
-      soilPH: 6.8,
-      nitrogen: 70,
-      phosphorus: 60,
-      potassium: 50,
-      temperature: 27,
-      humidity: 60,
-      rainfall: 85,
-    },
+    rice: { soilPH: 6.5, nitrogen: 80, phosphorus: 40, potassium: 40, temperature: 25, humidity: 80, rainfall: 150 },
+    wheat: { soilPH: 6.8, nitrogen: 100, phosphorus: 50, potassium: 30, temperature: 22, humidity: 60, rainfall: 80 },
+    cotton: { soilPH: 6.5, nitrogen: 120, phosphorus: 60, potassium: 50, temperature: 28, humidity: 65, rainfall: 100 },
+    sugarcane: { soilPH: 6.5, nitrogen: 110, phosphorus: 55, potassium: 60, temperature: 30, humidity: 75, rainfall: 140 },
+    maize: { soilPH: 6.5, nitrogen: 90, phosphorus: 45, potassium: 45, temperature: 26, humidity: 70, rainfall: 90 },
+    pulses: { soilPH: 7.0, nitrogen: 40, phosphorus: 50, potassium: 40, temperature: 24, humidity: 65, rainfall: 70 },
+    vegetables: { soilPH: 6.5, nitrogen: 100, phosphorus: 70, potassium: 80, temperature: 25, humidity: 75, rainfall: 110 },
+    oilseeds: { soilPH: 6.8, nitrogen: 70, phosphorus: 60, potassium: 50, temperature: 27, humidity: 60, rainfall: 85 },
   };
 
   const soilTypes: CropFeatures['soilType'][] = ['Sandy', 'Loamy', 'Clay', 'Red', 'Black', 'Alluvial'];
@@ -118,7 +53,6 @@ export function generateTrainingData(): TrainingData[] {
   Object.entries(cropCharacteristics).forEach(([crop, baseFeatures]) => {
     for (let i = 0; i < 50; i++) {
       const soilType = soilTypes[Math.floor(Math.random() * soilTypes.length)];
-      
       trainingData.push({
         features: {
           soilPH: baseFeatures.soilPH! + (Math.random() - 0.5) * 1.5,
@@ -154,18 +88,14 @@ export class RandomForestClassifier {
   // Train the random forest
   train(data: TrainingData[]): void {
     console.log(`Training Random Forest with ${this.numTrees} trees...`);
-    
     for (let i = 0; i < this.numTrees; i++) {
-      // Bootstrap sampling
       const bootstrapSample = this.bootstrapSample(data);
       const tree = this.buildTree(bootstrapSample, 0);
       this.trees.push(tree);
     }
-    
     console.log('Random Forest training complete!');
   }
 
-  // Bootstrap sampling with replacement
   private bootstrapSample(data: TrainingData[]): TrainingData[] {
     const sample: TrainingData[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -175,21 +105,14 @@ export class RandomForestClassifier {
     return sample;
   }
 
-  // Build a single decision tree
   private buildTree(data: TrainingData[], depth: number): TreeNode {
-    // Base cases
     if (depth >= this.maxDepth || data.length < this.minSamples) {
       return this.createLeafNode(data);
     }
 
-    // Find best split
     const split = this.findBestSplit(data);
-    
-    if (!split) {
-      return this.createLeafNode(data);
-    }
+    if (!split) return this.createLeafNode(data);
 
-    // Recursive split
     const leftData = data.filter(d => this.evaluateSplit(d.features, split.feature, split.threshold, true));
     const rightData = data.filter(d => this.evaluateSplit(d.features, split.feature, split.threshold, false));
 
@@ -206,17 +129,10 @@ export class RandomForestClassifier {
     };
   }
 
-  // Find best split point
   private findBestSplit(data: TrainingData[]): { feature: keyof CropFeatures; threshold: number } | null {
-    const numericFeatures: (keyof CropFeatures)[] = [
-      'soilPH', 'nitrogen', 'phosphorus', 'potassium', 
-      'temperature', 'humidity', 'rainfall'
-    ];
+    const numericFeatures: (keyof CropFeatures)[] = ['soilPH', 'nitrogen', 'phosphorus', 'potassium', 'temperature', 'humidity', 'rainfall'];
 
-    // Random feature selection for each split
-    const selectedFeatures = numericFeatures
-      .sort(() => Math.random() - 0.5)
-      .slice(0, Math.ceil(Math.sqrt(numericFeatures.length)));
+    const selectedFeatures = numericFeatures.sort(() => Math.random() - 0.5).slice(0, Math.ceil(Math.sqrt(numericFeatures.length)));
 
     let bestGini = Infinity;
     let bestSplit: { feature: keyof CropFeatures; threshold: number } | null = null;
@@ -239,19 +155,17 @@ export class RandomForestClassifier {
     return bestSplit;
   }
 
-  // Calculate Gini impurity
   private calculateGini(data: TrainingData[], feature: keyof CropFeatures, threshold: number): number {
     const left = data.filter(d => this.evaluateSplit(d.features, feature, threshold, true));
     const right = data.filter(d => this.evaluateSplit(d.features, feature, threshold, false));
-
     const total = data.length;
+
     const giniLeft = this.giniImpurity(left);
     const giniRight = this.giniImpurity(right);
 
     return (left.length / total) * giniLeft + (right.length / total) * giniRight;
   }
 
-  // Gini impurity calculation
   private giniImpurity(data: TrainingData[]): number {
     if (data.length === 0) return 0;
 
@@ -267,13 +181,7 @@ export class RandomForestClassifier {
     return impurity;
   }
 
-  // Evaluate split condition
-  private evaluateSplit(
-    features: CropFeatures,
-    feature: keyof CropFeatures,
-    threshold: number,
-    isLeft: boolean
-  ): boolean {
+  private evaluateSplit(features: CropFeatures, feature: keyof CropFeatures, threshold: number, isLeft: boolean): boolean {
     const value = features[feature];
     if (typeof value === 'number') {
       return isLeft ? value <= threshold : value > threshold;
@@ -281,7 +189,6 @@ export class RandomForestClassifier {
     return false;
   }
 
-  // Create leaf node with majority vote
   private createLeafNode(data: TrainingData[]): TreeNode {
     const counts = new Map<string, number>();
     data.forEach(d => counts.set(d.label, (counts.get(d.label) || 0) + 1));
@@ -298,11 +205,8 @@ export class RandomForestClassifier {
     return { prediction, samples: data.length };
   }
 
-  // Predict single sample
   private predictTree(tree: TreeNode, features: CropFeatures): string {
-    if (tree.prediction) {
-      return tree.prediction;
-    }
+    if (tree.prediction) return tree.prediction;
 
     const value = features[tree.feature!];
     if (typeof value === 'number' && tree.threshold !== undefined) {
@@ -314,21 +218,14 @@ export class RandomForestClassifier {
     return tree.prediction || '';
   }
 
-  // Predict with probability scores
   predict(features: CropFeatures): { crop: string; confidence: number }[] {
     const predictions = this.trees.map(tree => this.predictTree(tree, features));
-    
     const counts = new Map<string, number>();
     predictions.forEach(pred => counts.set(pred, (counts.get(pred) || 0) + 1));
 
-    const results = Array.from(counts.entries())
-      .map(([crop, count]) => ({
-        crop,
-        confidence: count / this.trees.length,
-      }))
+    return Array.from(counts.entries())
+      .map(([crop, count]) => ({ crop, confidence: count / this.trees.length }))
       .sort((a, b) => b.confidence - a.confidence);
-
-    return results;
   }
 }
 
@@ -346,11 +243,10 @@ export function initializeModel(): RandomForestClassifier {
   return rfModel;
 }
 
-// Extract features from land description using simple heuristics
+// Extract features from land description
 export function extractFeaturesFromDescription(landDescription: string, region: string): CropFeatures {
   const desc = landDescription.toLowerCase();
-  
-  // Soil type detection
+
   let soilType: CropFeatures['soilType'] = 'Loamy';
   if (desc.includes('sandy')) soilType = 'Sandy';
   else if (desc.includes('clay')) soilType = 'Clay';
@@ -358,7 +254,6 @@ export function extractFeaturesFromDescription(landDescription: string, region: 
   else if (desc.includes('black')) soilType = 'Black';
   else if (desc.includes('alluvial')) soilType = 'Alluvial';
 
-  // Default values for Odisha region
   return {
     soilPH: 6.5 + (Math.random() - 0.5) * 0.5,
     nitrogen: 70 + Math.random() * 30,
@@ -376,3 +271,4 @@ export function getMLPredictions(features: CropFeatures): { crop: string; confid
   const model = initializeModel();
   return model.predict(features);
 }
+
