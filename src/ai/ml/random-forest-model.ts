@@ -1,6 +1,4 @@
 // src/ai/ml/random-forest-model.ts
-'use server';
-
 /**
  * @fileOverview Random Forest model for crop prediction based on soil and climate data
  */
